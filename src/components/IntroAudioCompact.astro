@@ -1,0 +1,418 @@
+---
+import { MUSIC_TRACKS } from "@/data/musicPlaylist";
+/**
+ * Sticky header mini player: same playlist store as IntroAudio.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+const hasMusic = MUSIC_TRACKS.length > 0;
+---
+
+{
+  hasMusic && (
+    <div
+      id="intro-audio-compact"
+      class:list={["intro-audio-compact", className]}
+      data-has-music="true"
+      role="region"
+      aria-label="Compact music player"
+    >
+      <div class="intro-audio-compact-art-col" aria-hidden="true">
+        <div class="intro-audio-compact-art-disc" id="intro-audio-compact-art-disc">
+          <img
+            id="intro-audio-compact-art-img"
+            class="intro-audio-compact-art-img"
+            src={MUSIC_TRACKS[0]!.artwork}
+            alt=""
+            width="48"
+            height="48"
+            decoding="async"
+          />
+        </div>
+      </div>
+      <div class="intro-audio-compact-body">
+        <div class="intro-audio-compact-row">
+          <button
+            type="button"
+            class="intro-audio-compact-nav"
+            id="intro-audio-compact-prev"
+            title="Previous"
+            aria-label="Previous track"
+          >
+            <svg class="intro-audio-compact-ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path
+              d="M1.5 2.5H3.5V13.5H1.5V2.5zM4 8L12.5 2.5V13.5L4 8z"
+            />
+          </svg>
+        </button>
+        <button
+          id="intro-audio-compact-btn"
+            class="intro-audio-compact-btn"
+            type="button"
+            aria-label="Play music"
+          >
+            <svg
+              id="intro-audio-compact-play"
+              class="intro-audio-compact-icon"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M3 2.5a.5.5 0 0 1 .765-.424l10 5.5a.5.5 0 0 1 0 .848l-10 5.5A.5.5 0 0 1 3 13.5v-11z" />
+            </svg>
+            <svg
+              id="intro-audio-compact-pause"
+              class="intro-audio-compact-icon hidden"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"
+              />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="intro-audio-compact-nav"
+            id="intro-audio-compact-next"
+            title="Next"
+            aria-label="Next track"
+          >
+            <svg class="intro-audio-compact-ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M3 2.5L11.5 8 3 13.5V2.5zM12 2.5h2.5v11H12v-11z" />
+            </svg>
+          </button>
+          <input
+            id="intro-audio-compact-vol"
+            class="intro-audio-compact-vol"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.7"
+            aria-label="Volume"
+            title="Volume"
+          />
+        </div>
+        <div class="intro-audio-compact-bottom">
+          <span id="intro-audio-compact-meta" class="intro-audio-compact-meta">0:00</span>
+          <span class="intro-audio-compact-label" id="intro-audio-compact-now" title="">
+            ——
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .intro-audio-compact {
+    display: none;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+    min-height: 2.9rem;
+    border-radius: 0.6rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    background: color-mix(in srgb, var(--background) 88%, transparent);
+    padding: 0.28rem 0.45rem 0.28rem 0.3rem;
+    font-family: var(--font-cartograph, monospace);
+    font-size: 0.7rem;
+    color: var(--foreground);
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity 0.22s ease,
+      transform 0.22s ease,
+      border-color 0.22s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 22px -16px color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+
+  .intro-audio-compact.is-visible {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .intro-audio-compact.is-playing {
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
+  .intro-audio-compact-art-col {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+    width: 2.65rem;
+    min-width: 2.5rem;
+    padding-right: 0.3rem;
+  }
+  .intro-audio-compact-art-disc {
+    width: 100%;
+    max-width: 2.5rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
+    box-shadow: 0 1px 6px color-mix(in srgb, #000 12%, transparent);
+  }
+  .intro-audio-compact-art-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .intro-audio-compact.is-playing .intro-audio-compact-art-disc {
+    animation: intro-compact-art-spin 22s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .intro-audio-compact.is-playing .intro-audio-compact-art-disc {
+      animation: none;
+    }
+  }
+  @keyframes intro-compact-art-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .intro-audio-compact-body {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.2rem;
+  }
+
+  .intro-audio-compact-row {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .intro-audio-compact-bottom {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.35rem;
+  }
+
+  .intro-audio-compact-nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.55rem;
+    height: 1.5rem;
+    border: none;
+    background: transparent;
+    color: var(--accent);
+    border-radius: 0.28rem;
+    padding: 0;
+    cursor: pointer;
+  }
+  .intro-audio-compact-nav:hover {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .intro-audio-compact-ico {
+    width: 0.6rem;
+    height: 0.6rem;
+  }
+
+  .intro-audio-compact-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.65rem;
+    height: 1.65rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.2s ease;
+  }
+
+  .intro-audio-compact-btn:hover {
+    transform: scale(1.05);
+    background: color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+
+  .intro-audio-compact-btn:focus-visible,
+  .intro-audio-compact-nav:focus-visible {
+    outline: 2px dashed var(--accent);
+    outline-offset: 2px;
+  }
+
+  .intro-audio-compact-icon {
+    width: 0.68rem;
+    height: 0.68rem;
+  }
+
+  .intro-audio-compact-vol {
+    width: 2.2rem;
+    min-width: 1.5rem;
+    height: 0.22rem;
+    cursor: pointer;
+    margin-left: 0.1rem;
+    align-self: center;
+    accent-color: var(--accent);
+  }
+
+  @media (min-width: 520px) {
+    .intro-audio-compact-vol {
+      width: 3.25rem;
+    }
+  }
+
+  .intro-audio-compact-label {
+    font-size: 0.64rem;
+    min-width: 0;
+    flex: 0 1 auto;
+    text-align: right;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    max-width: min(11rem, 50vw);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-weight: 600;
+    color: #000000;
+  }
+
+  :global(html[data-theme="dark"]) .intro-audio-compact-label {
+    color: #ffffff;
+  }
+
+  .intro-audio-compact-meta {
+    color: var(--accent);
+    font-size: 0.66rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    opacity: 0.9;
+    flex-shrink: 0;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  @media (max-width: 400px) {
+    .intro-audio-compact-vol {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import {
+    getIntroAudioStore,
+    storeGoNext,
+    storeGoPrev,
+    storeSetVolume,
+    storeToggle,
+    emitIntroAudioState,
+    INTRO_AUDIO_STATE_EVENT,
+    type IntroAudioState,
+  } from "@/utils/introAudioStore";
+  import { MUSIC_TRACKS } from "@/data/musicPlaylist";
+
+  const fmt = (secs: number) => {
+    const s = Math.max(0, Math.floor(secs));
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  };
+
+  function initIntroAudioCompact() {
+    if (MUSIC_TRACKS.length === 0) return;
+    const wrap = document.getElementById("intro-audio-compact") as HTMLElement | null;
+    const btn = document.getElementById("intro-audio-compact-btn") as HTMLButtonElement | null;
+    const bPrev = document.getElementById("intro-audio-compact-prev") as HTMLButtonElement | null;
+    const bNext = document.getElementById("intro-audio-compact-next") as HTMLButtonElement | null;
+    const vol = document.getElementById("intro-audio-compact-vol") as HTMLInputElement | null;
+    const iconPlay = document.getElementById("intro-audio-compact-play") as SVGElement | null;
+    const iconPause = document.getElementById("intro-audio-compact-pause") as SVGElement | null;
+    const meta = document.getElementById("intro-audio-compact-meta") as HTMLElement | null;
+    const now = document.getElementById("intro-audio-compact-now") as HTMLElement | null;
+    const artImg = document.getElementById("intro-audio-compact-art-img") as HTMLImageElement | null;
+
+    if (!wrap || !btn || !meta) return;
+    if (wrap.dataset.introAudioCompactInitialized === "true") return;
+    wrap.dataset.introAudioCompactInitialized = "true";
+
+    const store = getIntroAudioStore();
+    if (store.tracks.length === 0) return;
+    if (vol) vol.value = String(store.audio.volume);
+
+    const setPlaying = (playing: boolean) => {
+      wrap.classList.toggle("is-playing", playing);
+      iconPlay?.classList.toggle("hidden", playing);
+      iconPause?.classList.toggle("hidden", !playing);
+      btn.setAttribute("aria-label", playing ? "Pause music" : "Play music");
+    };
+
+    const updateVisibility = (state: IntroAudioState) => {
+      const p = window.location.pathname;
+      const isHome = p === "/" || p === "/index.html";
+      wrap.classList.toggle("is-visible", !isHome && (state.playing || state.hasStarted));
+    };
+
+    const render = (state: IntroAudioState) => {
+      setPlaying(state.playing);
+      updateVisibility(state);
+      meta.textContent = fmt(state.currentTime);
+      if (now) {
+        now.textContent = state.label;
+        now.setAttribute("title", state.label);
+      }
+      if (vol && document.activeElement !== vol) {
+        if (Number(vol.value) !== state.volume) vol.value = String(state.volume);
+      }
+      if (artImg && state.artworkUrl) {
+        if (artImg.getAttribute("data-artwork") !== state.artworkUrl) {
+          artImg.setAttribute("data-artwork", state.artworkUrl);
+          artImg.src = state.artworkUrl;
+        }
+      }
+    };
+
+    btn.addEventListener("click", storeToggle);
+    bPrev?.addEventListener("click", storeGoPrev);
+    bNext?.addEventListener("click", storeGoNext);
+    vol?.addEventListener("input", e => {
+      storeSetVolume(Number((e.target as HTMLInputElement).value));
+    });
+
+    const controller = new AbortController();
+
+    window.addEventListener(
+      INTRO_AUDIO_STATE_EVENT,
+      (event: Event) => {
+        const customEvent = event as CustomEvent<IntroAudioState>;
+        render(customEvent.detail);
+      },
+      { signal: controller.signal }
+    );
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        controller.abort();
+      },
+      { once: true }
+    );
+
+    emitIntroAudioState(getIntroAudioStore());
+  }
+
+  initIntroAudioCompact();
+  document.addEventListener("astro:page-load", initIntroAudioCompact);
+</script>

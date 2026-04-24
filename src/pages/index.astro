@@ -1,0 +1,308 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Socials from "@/components/Socials.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import Card from "@/components/Card.astro";
+import getSortedPosts from "@/utils/getSortedPosts";
+import IconRss from "@/assets/icons/IconRss.svg";
+import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
+import heroGif from "@/assets/gifs/xiantiaoxiaogou.gif";
+import { SITE } from "@/config";
+import { SOCIALS } from "@/constants";
+import IntroAudio from "@/components/IntroAudio.astro";
+
+const [blogPosts, galleryPosts] = await Promise.all([
+  getCollection("blog"),
+  SITE.showGalleries && SITE.showGalleriesInIndex
+    ? getCollection("galleries")
+    : Promise.resolve([]),
+]);
+const posts = [...blogPosts, ...galleryPosts];
+
+const sortedPosts = getSortedPosts(posts);
+const featuredPosts = sortedPosts.filter(({ data }) => "featured" in data && data.featured);
+const recentPosts = sortedPosts.filter(({ data }) => !("featured" in data && data.featured));
+
+const heroTaglines = [...SITE.heroTaglines];
+const heroTaglinesJson = JSON.stringify(heroTaglines);
+const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
+---
+
+<Layout>
+  <Header />
+
+  <main id="main-content" data-layout="index" class="relative app-layout">
+    <!-- ═══════════════════ HERO ═══════════════════ -->
+    <section
+      id="hero"
+      class="hero-section relative pt-10 pb-14 sm:pt-14 sm:pb-20"
+    >
+      <div class="relative z-10">
+        <!-- Terminal prompt badge -->
+        <div
+          class="mb-3 inline-flex items-center gap-2 rounded-full border border-border/40 bg-muted/20 px-3.5 py-1.5 font-cartograph text-xs sm:text-sm"
+        >
+          <span class="relative flex h-2 w-2">
+            <span
+              class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60"
+            ></span>
+            <span class="relative inline-flex h-2 w-2 rounded-full bg-accent"
+            ></span>
+          </span>
+            <span class="text-accent">{SITE.heroTerminalPrompt.prefix}</span>
+            {SITE.heroTerminalPrompt.path}
+            <span class="opacity-40">{SITE.heroTerminalPrompt.suffix}</span>
+        </div>
+
+        <!-- Title + intro on the left; hero GIF uses the open area on the right (lg+) -->
+        <div
+          class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-8 xl:gap-10"
+        >
+          <!-- No lg:max-w-xl here: that cap forced the H1 to wrap despite free space beside the GIF -->
+          <div
+            class="flex min-w-0 flex-1 flex-col gap-5 sm:gap-6 lg:flex-[1.35_1_0%] lg:min-w-0"
+          >
+            <h1
+              class="hero-title text-5xl leading-[1.24] font-bold tracking-tight sm:text-6xl sm:leading-[1.22] lg:text-7xl lg:leading-[1.2] lg:whitespace-nowrap pb-[0.18em]"
+            >
+              {SITE.title}
+              <a
+                target="_blank"
+                href="/rss.xml"
+                class="ml-1 inline-block align-middle"
+                aria-label="rss feed"
+                title="RSS Feed"
+              >
+                <IconRss
+                  width={22}
+                  height={22}
+                  class="stroke-accent stroke-3 opacity-40 transition-opacity duration-300 hover:opacity-100"
+                />
+                <span class="sr-only">RSS Feed</span>
+              </a>
+            </h1>
+
+            {
+              SITE.introAudio.enabled && (
+                <div class="max-w-2xl w-full min-w-0">
+                  <IntroAudio />
+                </div>
+              )
+            }
+          </div>
+
+          <div
+            class="hero-gif-wrap flex shrink-0 justify-center sm:justify-start lg:flex-[0.65_1_0%] lg:justify-end lg:self-center lg:min-w-0"
+          >
+            <img
+              src={heroGif.src}
+              alt=""
+              width={heroGif.width}
+              height={heroGif.height}
+              class="hero-gif max-h-44 w-auto max-w-[min(100%,18rem)] object-contain select-none sm:max-h-52 sm:max-w-[min(100%,20rem)] lg:max-h-64 lg:max-w-[min(100%,24rem)] xl:max-h-72"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+        </div>
+
+        <!-- Rotating hero taglines (copy lives in `SITE.heroTaglines` in src/config.ts) -->
+        <div class="mt-7 max-w-xl">
+          <p
+            id="hero-rotating-tagline"
+            class="hero-tagline-root text-base leading-relaxed opacity-75 sm:text-lg cursor-pointer rounded-lg transition-opacity hover:opacity-90"
+            data-lines={heroTaglinesJson}
+            data-interval-ms={heroTaglineIntervalMs}
+            aria-live="polite"
+            aria-label="首页介绍语，点击切换下一条；亦会自动轮换"
+          >
+            <span class="hero-tagline-text">{heroTaglines[0]}</span>
+          </p>
+        </div>
+        <div class="mt-8 flex flex-col sm:flex-row sm:items-center gap-4">
+          <p class="text-sm opacity-50 flex-shrink-0">
+            Written by
+            <LinkButton
+              class="font-medium underline decoration-dashed underline-offset-4 hover:text-accent"
+              href={SITE.profile}
+              target="_blank"
+            >
+              {SITE.author}
+            </LinkButton>
+          </p>
+
+          {
+            // only display if at least one social link is enabled
+            SOCIALS.length > 0 && (
+              <div class="sm:border-l border-border/40 sm:pl-4">
+                <Socials />
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ FEATURED ═══════════════════ -->
+    {
+      featuredPosts.length > 0 && (
+        <section id="featured" class="pb-6">
+          <div class="mb-6 flex items-center gap-3">
+            <h2 class="flex items-center gap-2 text-sm font-bold tracking-widest text-accent uppercase">
+              <svg
+                class="size-4"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              Featured
+            </h2>
+            <div class="h-px flex-1 bg-border/20" />
+          </div>
+
+          <ul class="grid gap-4 sm:grid-cols-2 [&>li]:my-0">
+            {featuredPosts.map(data => (
+              <Card variant="h3" featured={true} {...data} />
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <!-- ═══════════════════ RECENT POSTS ═══════════════════ -->
+    {
+      recentPosts.length > 0 && (
+        <section id="recent-posts" class="pt-6 pb-6">
+          <div class="mb-6 flex items-center gap-3">
+            <h2 class="text-sm font-bold tracking-widest uppercase">
+              Recent
+            </h2>
+            <div class="h-px flex-1 bg-border/20" />
+            <span class="font-cartograph text-xs text-accent/40 select-none">
+              [{recentPosts.slice(0, SITE.postPerIndex).length}/
+              {recentPosts.length}]
+            </span>
+          </div>
+          <ul>
+            {recentPosts.map(
+              (data, index) =>
+                index < SITE.postPerIndex && <Card variant="h3" {...data} />
+            )}
+          </ul>
+
+          <!-- ═══════════════════ CTA ═══════════════════ -->
+          <div class="mt-8 mb-4 flex justify-center w-full">
+            <LinkButton
+              href="/posts/"
+              class="group inline-flex items-center w-full sm:w-auto justify-center gap-2 rounded-xl border border-accent/20 bg-accent/10 px-8 py-4 text-base font-bold text-accent transition-all duration-300 hover:border-accent hover:bg-accent/20 hover:shadow-xl hover:shadow-accent/20 hover:-translate-y-0.5"
+            >
+              Explore all posts
+              <IconArrowRight
+                class="inline-block transition-transform duration-300 group-hover:translate-x-1 rtl:-rotate-180"
+              />
+            </LinkButton>
+          </div>
+        </section>
+      )
+    }
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  /* ── Hero title shimmer ── */
+  .hero-title {
+    overflow: visible;
+    background: linear-gradient(
+      135deg,
+      var(--accent) 0%,
+      color-mix(in oklab, var(--accent) 50%, var(--foreground)) 20%,
+      var(--foreground) 35%,
+      var(--foreground) 65%,
+      color-mix(in oklab, var(--accent) 50%, var(--foreground)) 80%,
+      var(--accent) 100%
+    );
+    background-size: 250% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 6s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%,
+    100% {
+      background-position: 0% center;
+    }
+    50% {
+      background-position: 100% center;
+    }
+  }
+</style>
+
+<script>
+  function initHeroRotatingTagline() {
+    const root = document.getElementById("hero-rotating-tagline");
+    if (!root || root.dataset.taglineInit === "true") return;
+
+    let lines: string[] = [];
+    try {
+      lines = JSON.parse(root.getAttribute("data-lines") || "[]") as string[];
+    } catch {
+      return;
+    }
+    if (!Array.isArray(lines) || lines.length === 0) return;
+
+    root.dataset.taglineInit = "true";
+    const textSpan = root.querySelector(".hero-tagline-text");
+    let idx = 0;
+
+    const show = (i: number) => {
+      idx = ((i % lines.length) + lines.length) % lines.length;
+      const t = lines[idx];
+      if (textSpan) textSpan.textContent = t;
+    };
+
+    const intervalMs = Number(root.getAttribute("data-interval-ms")) || 10_000;
+    const timer =
+      lines.length > 1
+        ? window.setInterval(() => show(idx + 1), intervalMs)
+        : undefined;
+
+    const next = () => show(idx + 1);
+    root.addEventListener("click", next);
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        if (timer !== undefined) window.clearInterval(timer);
+        root.dataset.taglineInit = "false";
+      },
+      { once: true }
+    );
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    const indexLayout = (document.querySelector("#main-content") as HTMLElement)
+      ?.dataset?.layout;
+    if (indexLayout) {
+      sessionStorage.setItem("backUrl", "/");
+    }
+
+    initHeroRotatingTagline();
+
+    // ── Card glow follow cursor ──
+    document.querySelectorAll<HTMLElement>(".card-glow").forEach(card => {
+      card.addEventListener("mousemove", (e: MouseEvent) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+        card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+      });
+    });
+  });
+</script>

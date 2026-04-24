@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 220" role="img" aria-label="Schurfr&#248;ggy">
+  <!-- Three &lt;text&gt; so .logo-sphere keeps its own bbox for hover transform. -->
+  <text
+    class="logo-text-left"
+    x="8"
+    y="132"
+    style="fill: var(--logo-mono, #121212); font-family: var(--font-cascadia-code), 'Cascadia Code', 'Segoe UI', ui-sans-serif, system-ui, sans-serif, ui-monospace, monospace; font-size: 112px; font-weight: 600;"
+  >Schurfr</text>
+  <text
+    class="logo-sphere"
+    x="472"
+    y="138"
+    style="fill: var(--logo-mark, #4e342e); font-family: var(--font-cascadia-code), 'Cascadia Code', 'Segoe UI', ui-sans-serif, system-ui, sans-serif, ui-monospace, monospace; font-size: 168px; font-weight: 600;"
+  >&#248;</text>
+  <text
+    class="logo-text-right"
+    x="586"
+    y="132"
+    style="fill: var(--logo-mono, #121212); font-family: var(--font-cascadia-code), 'Cascadia Code', 'Segoe UI', ui-sans-serif, system-ui, sans-serif, ui-monospace, monospace; font-size: 112px; font-weight: 600;"
+  >ggy</text>
+</svg>

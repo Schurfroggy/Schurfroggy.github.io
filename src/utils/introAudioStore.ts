@@ -8,6 +8,22 @@ const DEFAULT_VOLUME = 0.7;
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
+type NetworkInformationLite = { saveData?: boolean; effectiveType?: string };
+
+/** Prefer full buffer before first play; honor Save-Data / metered heuristics. */
+const effectiveAudioPreload = (): HTMLMediaElement["preload"] => {
+  if (typeof navigator === "undefined") return "auto";
+  try {
+    const c = (navigator as Navigator & { connection?: NetworkInformationLite }).connection;
+    if (c?.saveData) return "metadata";
+    // Very slow links: avoid pulling whole MP3 until play (still faster than before on Wi‑Fi).
+    if (c?.effectiveType === "slow-2g" || c?.effectiveType === "2g") return "metadata";
+  } catch {
+    /* ignore */
+  }
+  return "auto";
+};
+
 const loadStoredVolume = (): number => {
   if (typeof window === "undefined" || !window.localStorage) return DEFAULT_VOLUME;
   const raw = window.localStorage.getItem(STORAGE_KEY_VOL);
@@ -86,6 +102,7 @@ const applySrc = (s: Store, wasPlaying: boolean) => {
   const i = getCatalogIndex(s);
   const t = s.tracks[i];
   if (!t) return;
+  s.audio.preload = effectiveAudioPreload();
   s.audio.src = t.src;
   s.audio.load();
   if (wasPlaying) {
@@ -260,7 +277,7 @@ export const getIntroAudioStore = () => {
   const initialMode: "sequential" | "shuffle" = storedMode ?? "sequential";
   const initialShuffle = initialMode === "shuffle" && n > 0 ? newShuffleOrder(n, null) : [];
   const audio = n > 0 ? new Audio(tracks[0]!.src) : new Audio();
-  audio.preload = "metadata";
+  audio.preload = effectiveAudioPreload();
   audio.volume = vol;
 
   const s: Store = {

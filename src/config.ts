@@ -46,9 +46,9 @@ export const SITE = {
     grain: false, // background noise layer (off)
   },
   editPost: {
-    enabled: false,
+    enabled: true,
     text: "Edit this post",
-    url: "https://github.com/0xdres/astro-devosfera/edit/main/",
+    url: "https://github.com/Schurfroggy/Schurfroggy.github.io/edit/main/",
   },
   dynamicOgImage: true,
   dir: "ltr", // "rtl" | "auto"

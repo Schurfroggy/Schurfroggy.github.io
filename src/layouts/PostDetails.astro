@@ -12,6 +12,7 @@ import GalleryEmbed from "@/components/GalleryEmbed.astro";
 import { getPath } from "@/utils/getPath";
 import { slugifyStr } from "@/utils/slugify";
 import { SITE } from "@/config";
+import { getReadingMinutesForBlogEntry } from "@/utils/readingTime";
 
 type Props = {
   post: CollectionEntry<"blog">;
@@ -34,6 +35,8 @@ const {
 } = post.data;
 
 const { Content } = await render(post);
+
+const readingMinutes = getReadingMinutesForBlogEntry(post);
 
 let ogImageUrl: string | undefined;
 
@@ -164,6 +167,29 @@ const nextPost =
               class="opacity-70 [&>svg]:hidden"
             />
           </div>
+
+          {
+            readingMinutes != null && (
+              <div
+                class="inline-flex items-center gap-1.5 rounded-lg border border-border/25 bg-muted/10 px-2.5 py-1 backdrop-blur-sm"
+                title="Estimated reading time"
+              >
+                <svg
+                  class="size-3.5 shrink-0 text-accent/70"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 6v6l4 2" />
+                </svg>
+                <span class="opacity-70">{readingMinutes} min read</span>
+              </div>
+            )
+          }
 
           <!-- Edit post -->
           <EditPost
@@ -421,11 +447,11 @@ const nextPost =
     }
   }
   attachCopyButtons();
+</script>
 
-  /* Go to page start after page swap */
-  document.addEventListener("astro:after-swap", () =>
-    window.scrollTo({ left: 0, top: 0, behavior: "instant" })
-  );
+<script>
+  import { initPostReadingPosition } from "@/utils/postReadingPosition";
+  initPostReadingPosition();
 </script>
 
 <style>

@@ -44,6 +44,7 @@ export const SITE = {
   backdropEffects: {
     cursorGlow: false, // cursor tracking with soft halo
     grain: false, // background noise layer (off)
+    trail: true, // cursor trail: light rainbow dots / dark sparks (canvas)
   },
   editPost: {
     enabled: true,

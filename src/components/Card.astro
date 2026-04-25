@@ -4,6 +4,7 @@ import { slugifyStr } from "@/utils/slugify";
 import { getEntryPath } from "@/utils/contentEntry";
 import Datetime from "./Datetime.astro";
 import IconGallery from "@/assets/icons/IconGallery.svg";
+import { getReadingMinutesForBlogEntry } from "@/utils/readingTime";
 
 type Props = {
   variant?: "h2" | "h3";
@@ -17,6 +18,8 @@ const modDatetime = "modDatetime" in data ? data.modDatetime : null;
 const timezone = "timezone" in data ? data.timezone : undefined;
 const href = getEntryPath({ collection, id, filePath });
 const isGallery = collection === "galleries";
+const readingMinutes =
+  collection === "blog" ? getReadingMinutesForBlogEntry({ collection, filePath }) : null;
 const headingId = `${collection}-${slugifyStr(String(id))}-title`;
 const descriptionId = `${collection}-${slugifyStr(String(id))}-description`;
 const viewTransitionName = slugifyStr(String(title).replaceAll(".", "-"));
@@ -99,7 +102,30 @@ const viewTransitionName = slugifyStr(String(title).replaceAll(".", "-"));
       <span class="absolute -inset-4 sm:-inset-5 z-10" aria-hidden="true"></span>
     </a>
     
-    <Datetime pubDatetime={pubDatetime} modDatetime={modDatetime} timezone={timezone} class="relative z-20 mt-1.5 pointer-events-none" />
+    <div
+      class="relative z-20 mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 pointer-events-none"
+    >
+      <Datetime pubDatetime={pubDatetime} modDatetime={modDatetime} timezone={timezone} />
+      {
+        readingMinutes != null && (
+          <span class="inline-flex items-center gap-1 font-cartograph text-xs text-foreground/50">
+            <svg
+              class="size-3 shrink-0 text-accent/60"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 6v6l4 2" />
+            </svg>
+            {readingMinutes} min read
+          </span>
+        )
+      }
+    </div>
     
     <p
       id={descriptionId}

@@ -1,4 +1,8 @@
 ---
+import IconMagicWand from "@/assets/icons/IconMagicWand.svg";
+import IconMagicWandDark from "@/assets/icons/IconMagicWandDark.svg";
+import IconMagicWandOff from "@/assets/icons/IconMagicWandOff.svg";
+import IconMagicWandOffDark from "@/assets/icons/IconMagicWandOffDark.svg";
 import IconMoon from "@/assets/icons/IconMoon.svg";
 import IconSearch from "@/assets/icons/IconSearch.svg";
 import IconArchive from "@/assets/icons/IconArchive.svg";
@@ -97,6 +101,13 @@ const isActive = (path: string) => {
             </li>
             <li>
               <a
+                href="/now"
+                class:list={["nav-link", { "nav-active": isActive("/now") }]}
+                >Now</a
+              >
+            </li>
+            <li>
+              <a
                 href="/about"
                 class:list={["nav-link", { "nav-active": isActive("/about") }]}
                 >About</a
@@ -175,6 +186,30 @@ const isActive = (path: string) => {
                   >
                     <IconMoon class="absolute top-1/2 left-1/2 -translate-1/2 scale-100 rotate-0 transition-all duration-300 dark:scale-0 dark:-rotate-90" />
                     <IconSunHigh class="absolute top-1/2 left-1/2 -translate-1/2 scale-0 rotate-90 transition-all duration-300 dark:scale-100 dark:rotate-0" />
+                  </button>
+                </li>
+              )
+            }
+            {
+              SITE.backdropEffects.trail && (
+                <li class="flex items-center">
+                  <button
+                    id="trail-toggle-btn"
+                    type="button"
+                    class="nav-icon-btn trail-toggle-btn relative"
+                    data-trail-on="true"
+                    title="Turn off cursor trail"
+                    aria-label="Turn off cursor trail"
+                    aria-pressed="true"
+                  >
+                    <span class="trail-wand-on pointer-events-none absolute inset-0 flex items-center justify-center">
+                      <IconMagicWand class="size-6 dark:hidden" />
+                      <IconMagicWandDark class="hidden size-6 dark:block" />
+                    </span>
+                    <span class="trail-wand-off pointer-events-none absolute inset-0 flex items-center justify-center">
+                      <IconMagicWandOff class="size-6 dark:hidden" />
+                      <IconMagicWandOffDark class="hidden size-6 dark:block" />
+                    </span>
                   </button>
                 </li>
               )
@@ -336,6 +371,19 @@ const isActive = (path: string) => {
     border-radius: 0.5rem;
     transition: color 0.2s ease, background-color 0.2s ease;
     color: var(--foreground);
+  }
+
+  .trail-toggle-btn .trail-wand-on,
+  .trail-toggle-btn .trail-wand-off {
+    display: none;
+  }
+
+  .trail-toggle-btn[data-trail-on="true"] .trail-wand-on {
+    display: flex;
+  }
+
+  .trail-toggle-btn[data-trail-on="false"] .trail-wand-off {
+    display: flex;
   }
 
   /* ─── Desktop Search Button with ⌘K ─── */

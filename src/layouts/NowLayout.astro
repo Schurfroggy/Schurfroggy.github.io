@@ -1,0 +1,36 @@
+---
+import type { MarkdownLayoutProps } from "astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Layout from "./Layout.astro";
+import { SITE } from "@/config";
+
+type Props = MarkdownLayoutProps<{
+  title: string;
+  description?: string;
+}>;
+
+const { frontmatter } = Astro.props;
+const pageTitle = frontmatter.title;
+const pageDescription = frontmatter.description ?? SITE.desc;
+---
+
+<Layout title={`${pageTitle} | ${SITE.title}`} description={pageDescription}>
+  <Header />
+  <Breadcrumb />
+  <main id="main-content" class="app-layout pb-16">
+    <header class="mb-8 border-b border-border/20 pb-6">
+      <p class="mb-2 font-cartograph text-xs font-semibold uppercase tracking-[0.2em] text-accent/80">
+        Status
+      </p>
+      <h1 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+        {pageTitle}
+      </h1>
+    </header>
+    <article class="app-prose max-w-app prose-headings:scroll-mt-24">
+      <slot />
+    </article>
+  </main>
+  <Footer />
+</Layout>

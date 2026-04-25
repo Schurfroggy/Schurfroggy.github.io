@@ -1,0 +1,77 @@
+---
+import { getCollection, render } from "astro:content";
+import NowLayout from "@/layouts/NowLayout.astro";
+import NowLiveClock from "@/components/NowLiveClock.astro";
+import MomentItem from "@/components/MomentItem.astro";
+const pageDescription =
+  "Short, dated updates — a living stream separate from the About page and long-form posts.";
+
+const importMetaDev = import.meta.env.DEV;
+
+const raw = await getCollection("moments", ({ data }) =>
+  importMetaDev ? true : !data.draft
+);
+const sorted = raw.sort(
+  (a, b) =>
+    new Date(b.data.pubDatetime).getTime() -
+    new Date(a.data.pubDatetime).getTime()
+);
+
+const momentItems = await Promise.all(
+  sorted.map(async entry => {
+    const { Content } = await render(entry);
+    return { entry, Content };
+  })
+);
+---
+
+<NowLayout title="Now" description={pageDescription}>
+  <NowLiveClock slot="header-extra" />
+  {
+    momentItems.length === 0 ? (
+      <p class="text-foreground/60 italic">
+        No updates yet. Add a file under <code>src/data/moments/</code> to get
+        started.
+      </p>
+    ) : (
+      <div
+        class="now-feed relative w-full"
+        role="region"
+        aria-label="Now page updates, newest first"
+      >
+        <div
+          class="pointer-events-none absolute start-0 top-2 bottom-2 hidden w-px bg-border/40 sm:start-[9px] sm:top-3 sm:block"
+          aria-hidden="true"
+        />
+        <ol class="m-0 list-none space-y-5 p-0 sm:space-y-6 sm:ps-0">
+          {momentItems.map(({ entry, Content }) => (
+            <li class="relative sm:ps-6">
+              <div
+                aria-hidden="true"
+                class="absolute start-0 top-7 hidden h-2.5 w-2.5 -translate-y-1/2 rounded-full border-2 border-accent/55 bg-background shadow-[0_0_0_3px] shadow-background sm:start-1.5 sm:block"
+              />
+              <MomentItem entry={entry} Content={Content} />
+            </li>
+          ))}
+        </ol>
+        <p class="mt-8 max-w-2xl border-t border-border/15 pt-6 text-sm text-foreground/50">
+          Snapshot stream — for longer write-ups see{" "}
+          <a
+            class="text-accent underline-offset-2 hover:underline"
+            href="/about/"
+          >
+            About
+          </a>{" "}
+          or
+          <a
+            class="ms-0.5 text-accent underline-offset-2 hover:underline"
+            href="/archives/"
+          >
+            Archives
+          </a>
+          .
+        </p>
+      </div>
+    )
+  }
+</NowLayout>

@@ -18,6 +18,7 @@
 
 - **文章**：带标签、RSS、首页可设 **精选**（`featured: true` 的文章会出现在精选区，其余在列表中）。
 - **图集**：`/galleries` 灯箱浏览；在配置中开启时，图集还可与文章一起出现在首页信息流、归档、标签页与 RSS。
+- **/now 动态流**：`src/data/moments/` 中每条一个 Markdown 文件，发布页按 `pubDatetime` 从新到旧展示（见「配置与组件」）。
 - **搜索**：⌘K / Ctrl+K 打开（Pagefind）；索引在**生产构建**时生成，见下文命令说明。
 - **头图与页头的音乐播放**：由 `src/data/musicPlaylist.ts` 与 `src/assets/music/*.mp3` 驱动，构建前脚本会更新封面，详见「命令」。
 - **[关于我](https://devosfera.vercel.app/about/)**：多写了一些身份、游戏喜好与开博初衷。
@@ -40,6 +41,7 @@
 │   ├── components/             # Astro / MDX 组件
 │   ├── data/
 │   │   ├── blog/               # 文章 .md / .mdx
+│   │   ├── moments/            # /now 轻量短动态（多文件、按时间排序，见下）
 │   │   ├── galleries/          # 每个专辑一个目录（见 GALLERIES.md）
 │   │   ├── musicPlaylist.ts   # 首页与页头播放列表
 │   │   └── musicCoverByMp3Path.json
@@ -121,6 +123,29 @@ hideEditPost: false
 3. 最终访问路径为 `/galleries/<slug>`。在 `SITE` 中打开 `showGalleries`；若要在首页/列表/归档/RSS 中混入图集，再开 `showGalleriesInIndex`（前提仍是 `showGalleries: true`）。
 
 更细的 index 元数据、封面、alt 与图片优化，见 [GALLERIES.md](GALLERIES.md)。
+
+### /now 动态流（`src/data/moments/`）
+
+- **作用**：在 [`/now`](https://devosfera.vercel.app/now/) 以「时间线」形式展示**短状态**，与 [About](https://devosfera.vercel.app/about/) 的长段自我介绍、与博客长文 **分开维护**；每条是仓库里的**单独** `.md` 或 `.mdx` 文件，并非单文件多段切分。
+- **排序（最新在上）**：构建时取所有条目的 `pubDatetime`，按**时间由新到旧** 排序；`modDatetime` 可填（用于在卡片上显示与 `Datetime` 组件一致的“已更新”态），**不** 参与主排序。文件名仅便于人类检索，**不会影响** 排序，请以 frontmatter 日期为准。
+
+在每条文件顶部写 frontmatter（完整字段以 `src/content.config.ts` 的 `moments` 集合 Zod 为准；下方为常见写法）：
+
+```yaml
+---
+title: "可选的短标题" # 可省略，省略时只显示日期 + 正文
+pubDatetime: 2026-04-25T12:00:00+08:00
+modDatetime: 2026-04-25T15:00:00+08:00   # 可选
+draft: false                            # 可选；true 时仅在 `astro dev` 中显示
+timezone: "Asia/Shanghai"               # 可选；不填则沿用 SITE.timezone
+---
+```
+
+- **正文体裁**：用一两段话、列表或引用即可；避免使用 `#` 级标题，以免与页面/卡片内标题层级重复；`##` / `###` 在一条内部可用。
+- **不纳入目录**：`moments` **不会** 出现在主文章列表、标签或 RSS 中，与 `src/data/blog` 的约定（如 `remark-toc` 目录、标签）**相互独立**；如不需要某条，用 `draft: true` 或从仓库中删除/改名。
+- **以 `_` 开头** 的 `.md` / `.mdx` 会按与博客相同的 glob 规则被**忽略**（不加载进集合），可用于本地备忘。
+
+**实现速览**（需改行为时自搜）：`src/pages/now/index.astro` 拉取集合并 `render`；`src/components/MomentItem.astro` 为单条卡片与排版。
 
 ### `GalleryEmbed` 组件
 

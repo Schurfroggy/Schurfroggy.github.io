@@ -12,14 +12,21 @@ export const stripYamlFrontmatter = (raw: string): string => {
  * Rough reading time for mixed CJK + Latin markdown (code blocks de-emphasized).
  * CJK ~450 chars/min, English words ~200/min.
  */
-export const estimateReadingMinutesFromMarkdown = (markdown: string): number => {
+export const estimateReadingMinutesFromMarkdown = (
+  markdown: string
+): number => {
   const text = markdown
     .replace(/```[\s\S]*?```/g, " ")
     .replace(/~~~[\s\S]*?~~~/g, " ")
     .replace(/`[^`\n]+`/g, " ");
 
-  const cjk = (text.match(/[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufa6f]/g) ?? []).length;
-  const withoutCjk = text.replace(/[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufa6f]/g, " ");
+  const cjk = (
+    text.match(/[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufa6f]/g) ?? []
+  ).length;
+  const withoutCjk = text.replace(
+    /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufa6f]/g,
+    " "
+  );
   const latinWords = withoutCjk
     .trim()
     .split(/\s+/)

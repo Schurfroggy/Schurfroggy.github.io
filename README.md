@@ -4,7 +4,7 @@
 
 This repository is the source of **[Schurfroggy的小屋](https://devosfera.vercel.app/)**—a static personal site for notes on development, software, and the occasional gallery. I’m [Schur NewYork Froggy](https://github.com/schurfroggy): a developer and graduate student who documents what I learn and what I build.
 
-*A space where curiosity becomes code. Exploring web development, software architecture and everything that makes the tech world spin.* — as the tagline in [`src/config.ts`](src/config.ts) puts it.
+_A space where curiosity becomes code. Exploring web development, software architecture and everything that makes the tech world spin._ — as the tagline in [`src/config.ts`](src/config.ts) puts it.
 
 If you are reading this for **how the site is built** rather than who I am, the sections below still cover the layout of the project, the scripts I run every day, and how posts and embeds are authored.
 
@@ -18,8 +18,9 @@ If you are reading this for **how the site is built** rather than who I am, the 
 
 - **Posts** on tech topics, with tags, RSS, and optional [featured](https://devosfera.vercel.app/) items on the home page.
 - **Galleries** of images with a lightbox at `/galleries`, and a mixed feed of posts and albums in the archives, lists, and RSS when enabled in config.
+- **The `/now` stream:** short, timestamped notes from `src/data/moments/` (see _Configuration, content & components_).
 - **Search** with ⌘K / Ctrl+K (Pagefind; the index is produced when you run a **production build**).
-- **Intro music** in the header and hero, driven by `src/data/musicPlaylist.ts` and `src/assets/music/*.mp3` (covers are updated by a pre-build script; see *Commands*).
+- **Intro music** in the header and hero, driven by `src/data/musicPlaylist.ts` and `src/assets/music/*.mp3` (covers are updated by a pre-build script; see _Commands_).
 - An **[About](https://devosfera.vercel.app/about/)** page for a bit more on me, games, and this blog’s purpose.
 
 More visual and design notes live in [CUSTOMIZATIONS.md](CUSTOMIZATIONS.md). Gallery and album behavior are documented in [GALLERIES.md](GALLERIES.md).
@@ -40,6 +41,7 @@ More visual and design notes live in [CUSTOMIZATIONS.md](CUSTOMIZATIONS.md). Gal
 │   ├── components/             # Astro + MDX components
 │   ├── data/
 │   │   ├── blog/               # posts: .md / .mdx
+│   │   ├── moments/            # /now: one file per “moment”, sorted by date
 │   │   ├── galleries/          # one folder per album (see GALLERIES.md)
 │   │   ├── musicPlaylist.ts   # home / header music list
 │   │   └── musicCoverByMp3Path.json
@@ -75,15 +77,15 @@ docker run -p 4321:80 devosfera-blog
 
 ## Commands
 
-| Command | Action |
-| :------ | :----- |
-| `npm install` | Install dependencies |
-| `npm run dev` | Local dev server at `http://localhost:4321` |
-| `npm run build` | Runs `extract-music-covers` (prebuild) → `astro check` + build → Pagefind, then copies the index to `public/pagefind/` |
-| `npm run preview` | Serves the production build locally |
-| `npm run format` | Format with Prettier |
-| `npm run format:check` | Check formatting without writing |
-| `npm run lint` | ESLint |
+| Command                | Action                                                                                                                 |
+| :--------------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| `npm install`          | Install dependencies                                                                                                   |
+| `npm run dev`          | Local dev server at `http://localhost:4321`                                                                            |
+| `npm run build`        | Runs `extract-music-covers` (prebuild) → `astro check` + build → Pagefind, then copies the index to `public/pagefind/` |
+| `npm run preview`      | Serves the production build locally                                                                                    |
+| `npm run format`       | Format with Prettier                                                                                                   |
+| `npm run format:check` | Check formatting without writing                                                                                       |
+| `npm run lint`         | ESLint                                                                                                                 |
 
 Replace `npm` with `pnpm` if you use the pnpm lockfile. The prebuild music script keeps cover art in `public/music-covers-extracted/` in sync with your MP3s; it runs automatically before `dev` and `build` via npm lifecycle hooks.
 
@@ -100,12 +102,12 @@ Create a `.md` or `.mdx` file with at least the following frontmatter (full sche
 ```yaml
 ---
 title: "Post title"
-pubDatetime: 2026-01-15T10:00:00Z   # required — ISO 8601 with timezone
+pubDatetime: 2026-01-15T10:00:00Z # required — ISO 8601 with timezone
 description: "Short description for SEO and cards"
 tags: ["astro", "dev"]
-featured: false       # true = show in the home “Featured” strip
-draft: false          # hidden in production
-timezone: "America/Guatemala"  # overrides SITE.timezone
+featured: false # true = show in the home “Featured” strip
+draft: false # hidden in production
+timezone: "America/Guatemala" # overrides SITE.timezone
 hideEditPost: false
 ---
 ```
@@ -121,6 +123,28 @@ hideEditPost: false
 3. Public URL: `/galleries/<slug>`. Turn albums on in `SITE.showGalleries` and, if you like, mix them into the home and list pages with `SITE.showGalleriesInIndex`.
 
 For frontmatter, covers, and image optimization, see [GALLERIES.md](GALLERIES.md).
+
+### The `/now` stream (`src/data/moments/`)
+
+- **What it is:** the [`/now`](https://devosfera.vercel.app/now/) page is a **reverse-chronological** stream of _moments_—separate from the [About](https://devosfera.vercel.app/about/) blurb and from long blog posts. Each item is a **separate** `.md` or `.mdx` file, not a split of one giant file.
+- **Newest on top (sorting):** at build time, entries are sorted by **`pubDatetime` descending** (most recent first). `modDatetime` is **optional** and (when present) drives the “Updated” label in the per-item date row; it does **not** change the primary order. The filename is only for you—**put the real instant in the front matter**.
+
+Add front matter at the top of each file (the canonical schema is the `moments` collection in `src/content.config.ts`):
+
+```yaml
+---
+title: "Optional short headline" # may be omitted: then only date + body show
+pubDatetime: 2026-04-25T12:00:00+08:00
+modDatetime: 2026-04-25T15:00:00+08:00 # optional
+draft: false # optional: true = dev-only
+timezone: "Asia/Shanghai" # optional: defaults to SITE.timezone
+---
+```
+
+- **Body content:** a paragraph, a list, or a quote is enough; don’t use `#` in the body (it fights the page heading model); `##` / `###` inside a moment are fine.
+- **Not mixed into blog surfaces:** `moments` are **not** in the post index, tag pages, or RSS, and you don’t need blog-only conventions like a table-of-contents block here. Hide a note with `draft: true` or remove/rename the file. Files or folders **starting with `_`** are ignored by the same glob as blog posts and never enter the collection.
+
+**Where the UI lives** (if you need to change behaviour): `src/pages/now/index.astro` loads the collection; `src/components/MomentItem.astro` styles one card.
 
 ### The `GalleryEmbed` component (MDX)
 
@@ -140,14 +164,14 @@ Theme foundation: [AstroPaper](https://github.com/satnaing/astro-paper) by [Sat 
 
 Fixes and features merged from the upstream AstroPaper tracker (this codebase):
 
-| Issue | Note |
-| :---- | :--- |
-| [#614](https://github.com/satnaing/astro-paper/issues/614) | “Back to top” and pagination when share links are empty — `BackToTopButton.astro` |
-| [#574](https://github.com/satnaing/astro-paper/issues/574) | Table overflow on mobile — `typography.css` (thanks [GladerJ](https://github.com/GladerJ)) |
-| [#569](https://github.com/satnaing/astro-paper/issues/569) | Consistent back-to-top on desktop — `BackToTopButton.astro`, `PostDetails.astro` |
-| [#566](https://github.com/satnaing/astro-paper/issues/566) | Share links in new tab — [PR #611](https://github.com/satnaing/astro-paper/pull/611) |
-| [#131](https://github.com/satnaing/astro-paper/issues/131) | MDX with `@astrojs/mdx` — `astro.config.ts`, `content.config.ts` |
+| Issue                                                      | Note                                                                                                                                                                   |
+| :--------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#614](https://github.com/satnaing/astro-paper/issues/614) | “Back to top” and pagination when share links are empty — `BackToTopButton.astro`                                                                                      |
+| [#574](https://github.com/satnaing/astro-paper/issues/574) | Table overflow on mobile — `typography.css` (thanks [GladerJ](https://github.com/GladerJ))                                                                             |
+| [#569](https://github.com/satnaing/astro-paper/issues/569) | Consistent back-to-top on desktop — `BackToTopButton.astro`, `PostDetails.astro`                                                                                       |
+| [#566](https://github.com/satnaing/astro-paper/issues/566) | Share links in new tab — [PR #611](https://github.com/satnaing/astro-paper/pull/611)                                                                                   |
+| [#131](https://github.com/satnaing/astro-paper/issues/131) | MDX with `@astrojs/mdx` — `astro.config.ts`, `content.config.ts`                                                                                                       |
 | [#495](https://github.com/satnaing/astro-paper/issues/495) | Timezone-aware post filtering — `postFilter.ts` (see [kj-9’s reference](https://github.com/satnaing/astro-paper/compare/main...kj-9:astro-paper:fix-post-filter-date)) |
-| [#553](https://github.com/satnaing/astro-paper/issues/553) | Galleries section, lightbox, `GalleryEmbed` — [GALLERIES.md](GALLERIES.md) |
+| [#553](https://github.com/satnaing/astro-paper/issues/553) | Galleries section, lightbox, `GalleryEmbed` — [GALLERIES.md](GALLERIES.md)                                                                                             |
 
 If something here helps your own project, a star on the original AstroPaper or a mention in your README is a nice way to pass it on.

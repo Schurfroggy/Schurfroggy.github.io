@@ -25,7 +25,8 @@ const normalizePathname = (pathname: string) => {
 const isBlogPostDetailPathname = (pathname: string): boolean => {
   const p = normalizePathname(pathname);
   if (!p.startsWith("/posts")) return false;
-  const rest = p === "/posts" ? "" : p.slice("/posts".length).replace(/^\//, "");
+  const rest =
+    p === "/posts" ? "" : p.slice("/posts".length).replace(/^\//, "");
   if (rest === "") return false;
   if (/^\d+$/.test(rest)) return false;
   return true;
@@ -33,7 +34,8 @@ const isBlogPostDetailPathname = (pathname: string): boolean => {
 
 type Stored = { ratio: number; y: number; v: 1 };
 
-const storageKey = (pathname: string) => `${STORAGE_PREFIX}${normalizePathname(pathname)}`;
+const storageKey = (pathname: string) =>
+  `${STORAGE_PREFIX}${normalizePathname(pathname)}`;
 
 const readStored = (pathname: string): Stored | null => {
   if (typeof localStorage === "undefined") return null;
@@ -41,7 +43,8 @@ const readStored = (pathname: string): Stored | null => {
     const raw = localStorage.getItem(storageKey(pathname));
     if (!raw) return null;
     const o = JSON.parse(raw) as Partial<Stored>;
-    if (o.v !== 1 || typeof o.ratio !== "number" || !Number.isFinite(o.ratio)) return null;
+    if (o.v !== 1 || typeof o.ratio !== "number" || !Number.isFinite(o.ratio))
+      return null;
     return {
       ratio: Math.min(1, Math.max(0, o.ratio)),
       y: typeof o.y === "number" && Number.isFinite(o.y) ? o.y : 0,
@@ -149,7 +152,10 @@ const restoreForPathname = (pathname: string): boolean => {
   if (!s) return false;
 
   const run = () => {
-    if (location.hash || normalizePathname(location.pathname) !== normalizePathname(pathname))
+    if (
+      location.hash ||
+      normalizePathname(location.pathname) !== normalizePathname(pathname)
+    )
       return;
     const again = readStored(pathname);
     if (!again) return;

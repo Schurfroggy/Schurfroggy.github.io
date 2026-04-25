@@ -14,10 +14,12 @@ type NetworkInformationLite = { saveData?: boolean; effectiveType?: string };
 const effectiveAudioPreload = (): HTMLMediaElement["preload"] => {
   if (typeof navigator === "undefined") return "auto";
   try {
-    const c = (navigator as Navigator & { connection?: NetworkInformationLite }).connection;
+    const c = (navigator as Navigator & { connection?: NetworkInformationLite })
+      .connection;
     if (c?.saveData) return "metadata";
     // Very slow links: avoid pulling whole MP3 until play (still faster than before on Wi‑Fi).
-    if (c?.effectiveType === "slow-2g" || c?.effectiveType === "2g") return "metadata";
+    if (c?.effectiveType === "slow-2g" || c?.effectiveType === "2g")
+      return "metadata";
   } catch {
     /* ignore */
   }
@@ -25,7 +27,8 @@ const effectiveAudioPreload = (): HTMLMediaElement["preload"] => {
 };
 
 const loadStoredVolume = (): number => {
-  if (typeof window === "undefined" || !window.localStorage) return DEFAULT_VOLUME;
+  if (typeof window === "undefined" || !window.localStorage)
+    return DEFAULT_VOLUME;
   const raw = window.localStorage.getItem(STORAGE_KEY_VOL);
   if (raw === null) return DEFAULT_VOLUME;
   const n = Number(raw);
@@ -148,7 +151,9 @@ const readState = (s: Store): IntroAudioState => {
 
 export const emitIntroAudioState = (s: Store) => {
   window.dispatchEvent(
-    new CustomEvent<IntroAudioState>(INTRO_AUDIO_STATE_EVENT, { detail: readState(s) })
+    new CustomEvent<IntroAudioState>(INTRO_AUDIO_STATE_EVENT, {
+      detail: readState(s),
+    })
   );
 };
 
@@ -275,7 +280,8 @@ export const getIntroAudioStore = () => {
 
   const n = tracks.length;
   const initialMode: "sequential" | "shuffle" = storedMode ?? "sequential";
-  const initialShuffle = initialMode === "shuffle" && n > 0 ? newShuffleOrder(n, null) : [];
+  const initialShuffle =
+    initialMode === "shuffle" && n > 0 ? newShuffleOrder(n, null) : [];
   const audio = n > 0 ? new Audio(tracks[0]!.src) : new Audio();
   audio.preload = effectiveAudioPreload();
   audio.volume = vol;
@@ -296,7 +302,9 @@ export const getIntroAudioStore = () => {
     s.posInShuffle = 0;
   }
   if (n > 0) {
-    audio.src = (initialMode === "sequential" ? tracks[0] : tracks[s.shuffleOrder[0]!])!.src;
+    audio.src = (
+      initialMode === "sequential" ? tracks[0] : tracks[s.shuffleOrder[0]!]
+    )!.src;
     audio.load();
   }
 

@@ -260,7 +260,10 @@ function wireTrailToggleButton(selector: string): void {
     "aria-label",
     on ? "Turn off cursor trail" : "Turn on cursor trail"
   );
-  fresh.setAttribute("title", on ? "Turn off cursor trail" : "Turn on cursor trail");
+  fresh.setAttribute(
+    "title",
+    on ? "Turn off cursor trail" : "Turn on cursor trail"
+  );
 
   fresh.addEventListener("click", () => {
     setTrailUserEnabled(!isTrailUserEnabled());

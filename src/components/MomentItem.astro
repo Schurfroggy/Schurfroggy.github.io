@@ -1,0 +1,61 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Datetime from "./Datetime.astro";
+import { SITE } from "@/config";
+import { getMomentDisplayTitle } from "@/utils/momentTitle";
+
+type Props = {
+  entry: CollectionEntry<"moments">;
+  /**
+   * Rendered markdown from `render(entry)` (Astro 5+ content layer).
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Content: any;
+};
+
+const { entry, Content } = Astro.props;
+const { title, pubDatetime, modDatetime, timezone: momentTz } = entry.data;
+const postTimezone = momentTz ?? SITE.timezone;
+const displayTitle = getMomentDisplayTitle(
+  title,
+  pubDatetime,
+  momentTz
+);
+const anchor = `moment-${String(entry.id).replace(/[^a-zA-Z0-9-]/g, "-")}`;
+---
+
+<article
+  id={anchor}
+  class="moment-card group/moment relative overflow-hidden rounded-2xl border border-border/20 bg-gradient-to-b from-muted/5 to-transparent p-4 shadow-sm transition-[border-color,box-shadow,transform] duration-300 sm:p-5"
+  class:list={[
+    "hover:border-accent/30 hover:shadow-md hover:shadow-accent/5",
+    "focus-within:border-accent/30 focus-within:shadow-md",
+  ]}
+  aria-labelledby={`${anchor}-title`}
+>
+  <div
+    class="mb-3 flex w-full flex-wrap items-baseline justify-between gap-x-3 gap-y-1"
+  >
+    <h2
+      class="min-w-0 text-lg leading-snug font-semibold tracking-tight text-foreground"
+      id={`${anchor}-title`}
+    >
+      {displayTitle}
+    </h2>
+    <div class="shrink-0">
+      <Datetime
+        class="!gap-x-1.5 text-foreground/55 [&_time]:!text-sm"
+        size="sm"
+        pubDatetime={pubDatetime}
+        modDatetime={modDatetime}
+        timezone={postTimezone}
+      />
+    </div>
+  </div>
+
+  <div
+    class="app-prose max-w-app prose-headings:scroll-mt-24 prose-h2:text-base prose-h2:font-semibold prose-h3:text-[0.95rem] prose-h3:font-medium prose-p:my-2 prose-p:leading-relaxed first:prose-p:mt-0 last:prose-p:mb-0"
+  >
+    <Content />
+  </div>
+</article>

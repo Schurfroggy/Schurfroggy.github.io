@@ -27,7 +27,11 @@ const swatches: Record<BackgroundPreset, string> = {
   aria-label="浅色背景配色"
   transition:persist="bg-preset-picker"
 >
-  <div class="bg-preset-picker__swatches" role="radiogroup" aria-label="选择浅色渐变背景">
+  <div
+    class="bg-preset-picker__swatches"
+    role="radiogroup"
+    aria-label="选择浅色渐变背景"
+  >
     {
       BACKGROUND_PRESETS.map(preset => (
         <button
@@ -57,30 +61,37 @@ const swatches: Record<BackgroundPreset, string> = {
   function syncSwatchUI() {
     const root = document.documentElement;
     const current = root.getAttribute("data-bg-preset");
-    document.querySelectorAll<HTMLButtonElement>(".bg-preset-swatch").forEach(btn => {
-      const p = btn.dataset.preset;
-      const on = p === current;
-      btn.setAttribute("aria-checked", on ? "true" : "false");
-      btn.classList.toggle("bg-preset-swatch--active", on);
-    });
+    document
+      .querySelectorAll<HTMLButtonElement>(".bg-preset-swatch")
+      .forEach(btn => {
+        const p = btn.dataset.preset;
+        const on = p === current;
+        btn.setAttribute("aria-checked", on ? "true" : "false");
+        btn.classList.toggle("bg-preset-swatch--active", on);
+      });
   }
 
   function initBgPresetPicker() {
     applyBgPresetFromStorage();
     syncSwatchUI();
 
-    const wrap = document.querySelector(".bg-preset-picker") as HTMLElement | null;
+    const wrap = document.querySelector(
+      ".bg-preset-picker"
+    ) as HTMLElement | null;
     if (!wrap || wrap.dataset.bgPickerInit === "true") return;
     wrap.dataset.bgPickerInit = "true";
 
-    wrap.querySelectorAll<HTMLButtonElement>(".bg-preset-swatch").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const p = btn.dataset.preset as BackgroundPreset | undefined;
-        if (!p || !(BACKGROUND_PRESETS as readonly string[]).includes(p)) return;
-        setBgPreset(p);
-        syncSwatchUI();
+    wrap
+      .querySelectorAll<HTMLButtonElement>(".bg-preset-swatch")
+      .forEach(btn => {
+        btn.addEventListener("click", () => {
+          const p = btn.dataset.preset as BackgroundPreset | undefined;
+          if (!p || !(BACKGROUND_PRESETS as readonly string[]).includes(p))
+            return;
+          setBgPreset(p);
+          syncSwatchUI();
+        });
       });
-    });
 
     window.addEventListener("site-bg-preset", syncSwatchUI);
     window.addEventListener("site-theme-reflected", syncSwatchUI);

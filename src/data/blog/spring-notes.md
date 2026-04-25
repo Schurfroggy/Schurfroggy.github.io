@@ -11,7 +11,6 @@ tags:
 
 ## Table of contents
 
-
 ## 1. 简介
 
 ### 1.1.简介
@@ -562,13 +561,13 @@ Address.java
 
 ```java
  public class Address {
- 
+
      private String address;
- 
+
      public String getAddress() {
          return address;
     }
- 
+
      public void setAddress(String address) {
          this.address = address;
     }
@@ -579,14 +578,14 @@ Student.java
 
 ```java
  package com.kuang.pojo;
- 
+
  import java.util.List;
  import java.util.Map;
  import java.util.Properties;
  import java.util.Set;
- 
+
  public class Student {
- 
+
      private String name;
      private Address address;
      private String[] books;
@@ -595,39 +594,39 @@ Student.java
      private Set<String> games;
      private String wife;
      private Properties info;
- 
+
      public void setName(String name) {
          this.name = name;
     }
- 
+
      public void setAddress(Address address) {
          this.address = address;
     }
- 
+
      public void setBooks(String[] books) {
          this.books = books;
     }
- 
+
      public void setHobbys(List<String> hobbys) {
          this.hobbys = hobbys;
     }
- 
+
      public void setCard(Map<String, String> card) {
          this.card = card;
     }
- 
+
      public void setGames(Set<String> games) {
          this.games = games;
     }
- 
+
      public void setWife(String wife) {
          this.wife = wife;
     }
- 
+
      public void setInfo(Properties info) {
          this.info = info;
     }
- 
+
      public void show(){
          System.out.println("name="+ name
                  + ",address="+ address.getAddress()
@@ -637,15 +636,15 @@ Student.java
              System.out.print("<<"+book+">>\t");
         }
          System.out.println("\n爱好:"+hobbys);
- 
+
          System.out.println("card:"+card);
- 
+
          System.out.println("games:"+games);
- 
+
          System.out.println("wife:"+wife);
- 
+
          System.out.println("info:"+info);
- 
+
     }
  }
 ```
@@ -666,11 +665,11 @@ Student.java
  @Test
  public void test01(){
      ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
- 
+
      Student student = (Student) context.getBean("student");
- 
+
      System.out.println(student.getName());
- 
+
  }
 ```
 
@@ -682,7 +681,7 @@ Student.java
  <bean id="addr" class="com.kuang.pojo.Address">
      <property name="address" value="重庆"/>
  </bean>
- 
+
  <bean id="student" class="com.kuang.pojo.Student">
      <property name="name" value="小明"/>
      <property name="address" ref="addr"/>
@@ -771,15 +770,15 @@ User.java ：【注意：这里没有有参构造器！】
  public class User {
      private String name;
      private int age;
- 
+
      public void setName(String name) {
          this.name = name;
     }
- 
+
      public void setAge(int age) {
          this.age = age;
     }
- 
+
      @Override
      public String toString() {
          return "User{" +
@@ -794,7 +793,7 @@ User.java ：【注意：这里没有有参构造器！】
 
 ```
  导入约束 : xmlns:p="http://www.springframework.org/schema/p"
- 
+
  <!--P(属性: properties)命名空间 , 直接注入属性-->
  <bean id="user" class="com.kuang.pojo.User" p:name="狂神" p:age="18"/>
 ```
@@ -857,7 +856,7 @@ User.java ：【注意：这里没有有参构造器！】
 当一个bean的作用域为Prototype，表示一个bean定义对应多个对象实例。Prototype作用域的bean会导致在每次对该bean请求（将其注入到另一个bean中，或者以程序的方式调用容器的getBean()方法）时都会创建一个新的bean实例。Prototype是原型类型，它在我们创建容器的时候并没有实例化，而是当我们获取bean的时候才会去创建一个对象，而且我们每次获取到的对象都不是同一个对象。根据经验，对有状态的bean应该使用prototype作用域，而对无状态的bean则应该使用singleton作用域。在XML中将bean定义成prototype，可以这样配置：
 
 ```xml
- <bean id="account" class="com.foo.DefaultAccount" scope="prototype"/>  
+ <bean id="account" class="com.foo.DefaultAccount" scope="prototype"/>
   或者
  <bean id="account" class="com.foo.DefaultAccount" singleton="false"/>
 ```
@@ -906,8 +905,8 @@ Spring的自动装配需要从两个角度来实现，或者说是两个操作�
 
 **推荐不使用自动装配xml配置 , 而使用注解 .**
 
-**
-**
+\*\*
+\*\*
 
 > 测试环境搭建
 
@@ -1348,7 +1347,7 @@ public class User {
 - 使用过程中， 可以不用扫描，扫描是为了类上的注解
 
 ```xml
-<context:annotation-config/>  
+<context:annotation-config/>
 ```
 
 作用：
@@ -2006,7 +2005,7 @@ public class DiyPointcut {
    public void after(){
        System.out.println("---------方法执行后---------");
   }
-   
+
 }
 ```
 
@@ -2437,7 +2436,7 @@ public class UserDaoImpl implements UserMapper {
        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
        return mapper.selectUser();
   }
-   
+
 }
 ```
 
@@ -2724,4 +2723,3 @@ public void test2(){
 **B站地址：https://space.bilibili.com/95256449**
 
 文章知识点与官方知识档案匹配，可进一步学习相关知识
-

@@ -20,7 +20,10 @@ const hasMusic = MUSIC_TRACKS.length > 0;
       aria-label="Compact music player"
     >
       <div class="intro-audio-compact-art-col" aria-hidden="true">
-        <div class="intro-audio-compact-art-disc" id="intro-audio-compact-art-disc">
+        <div
+          class="intro-audio-compact-art-disc"
+          id="intro-audio-compact-art-disc"
+        >
           <img
             id="intro-audio-compact-art-img"
             class="intro-audio-compact-art-img"
@@ -41,14 +44,17 @@ const hasMusic = MUSIC_TRACKS.length > 0;
             title="Previous"
             aria-label="Previous track"
           >
-            <svg class="intro-audio-compact-ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-            <path
-              d="M1.5 2.5H3.5V13.5H1.5V2.5zM4 8L12.5 2.5V13.5L4 8z"
-            />
-          </svg>
-        </button>
-        <button
-          id="intro-audio-compact-btn"
+            <svg
+              class="intro-audio-compact-ico"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M1.5 2.5H3.5V13.5H1.5V2.5zM4 8L12.5 2.5V13.5L4 8z" />
+            </svg>
+          </button>
+          <button
+            id="intro-audio-compact-btn"
             class="intro-audio-compact-btn"
             type="button"
             aria-label="Play music"
@@ -69,9 +75,7 @@ const hasMusic = MUSIC_TRACKS.length > 0;
               fill="currentColor"
               aria-hidden="true"
             >
-              <path
-                d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"
-              />
+              <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z" />
             </svg>
           </button>
           <button
@@ -81,7 +85,12 @@ const hasMusic = MUSIC_TRACKS.length > 0;
             title="Next"
             aria-label="Next track"
           >
-            <svg class="intro-audio-compact-ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <svg
+              class="intro-audio-compact-ico"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              aria-hidden="true"
+            >
               <path d="M3 2.5L11.5 8 3 13.5V2.5zM12 2.5h2.5v11H12v-11z" />
             </svg>
           </button>
@@ -98,8 +107,14 @@ const hasMusic = MUSIC_TRACKS.length > 0;
           />
         </div>
         <div class="intro-audio-compact-bottom">
-          <span id="intro-audio-compact-meta" class="intro-audio-compact-meta">0:00</span>
-          <span class="intro-audio-compact-label" id="intro-audio-compact-now" title="">
+          <span id="intro-audio-compact-meta" class="intro-audio-compact-meta">
+            0:00
+          </span>
+          <span
+            class="intro-audio-compact-label"
+            id="intro-audio-compact-now"
+            title=""
+          >
             ——
           </span>
         </div>
@@ -129,7 +144,8 @@ const hasMusic = MUSIC_TRACKS.length > 0;
       transform 0.22s ease,
       border-color 0.22s ease;
     backdrop-filter: blur(10px);
-    box-shadow: 0 8px 22px -16px color-mix(in srgb, var(--accent) 50%, transparent);
+    box-shadow: 0 8px 22px -16px
+      color-mix(in srgb, var(--accent) 50%, transparent);
   }
 
   .intro-audio-compact.is-visible {
@@ -238,7 +254,9 @@ const hasMusic = MUSIC_TRACKS.length > 0;
     background: color-mix(in srgb, var(--accent) 12%, transparent);
     color: var(--accent);
     cursor: pointer;
-    transition: transform 0.15s ease, background-color 0.2s ease;
+    transition:
+      transform 0.15s ease,
+      background-color 0.2s ease;
   }
 
   .intro-audio-compact-btn:hover {
@@ -333,16 +351,36 @@ const hasMusic = MUSIC_TRACKS.length > 0;
 
   function initIntroAudioCompact() {
     if (MUSIC_TRACKS.length === 0) return;
-    const wrap = document.getElementById("intro-audio-compact") as HTMLElement | null;
-    const btn = document.getElementById("intro-audio-compact-btn") as HTMLButtonElement | null;
-    const bPrev = document.getElementById("intro-audio-compact-prev") as HTMLButtonElement | null;
-    const bNext = document.getElementById("intro-audio-compact-next") as HTMLButtonElement | null;
-    const vol = document.getElementById("intro-audio-compact-vol") as HTMLInputElement | null;
-    const iconPlay = document.getElementById("intro-audio-compact-play") as SVGElement | null;
-    const iconPause = document.getElementById("intro-audio-compact-pause") as SVGElement | null;
-    const meta = document.getElementById("intro-audio-compact-meta") as HTMLElement | null;
-    const now = document.getElementById("intro-audio-compact-now") as HTMLElement | null;
-    const artImg = document.getElementById("intro-audio-compact-art-img") as HTMLImageElement | null;
+    const wrap = document.getElementById(
+      "intro-audio-compact"
+    ) as HTMLElement | null;
+    const btn = document.getElementById(
+      "intro-audio-compact-btn"
+    ) as HTMLButtonElement | null;
+    const bPrev = document.getElementById(
+      "intro-audio-compact-prev"
+    ) as HTMLButtonElement | null;
+    const bNext = document.getElementById(
+      "intro-audio-compact-next"
+    ) as HTMLButtonElement | null;
+    const vol = document.getElementById(
+      "intro-audio-compact-vol"
+    ) as HTMLInputElement | null;
+    const iconPlay = document.getElementById(
+      "intro-audio-compact-play"
+    ) as SVGElement | null;
+    const iconPause = document.getElementById(
+      "intro-audio-compact-pause"
+    ) as SVGElement | null;
+    const meta = document.getElementById(
+      "intro-audio-compact-meta"
+    ) as HTMLElement | null;
+    const now = document.getElementById(
+      "intro-audio-compact-now"
+    ) as HTMLElement | null;
+    const artImg = document.getElementById(
+      "intro-audio-compact-art-img"
+    ) as HTMLImageElement | null;
 
     if (!wrap || !btn || !meta) return;
     if (wrap.dataset.introAudioCompactInitialized === "true") return;
@@ -362,7 +400,10 @@ const hasMusic = MUSIC_TRACKS.length > 0;
     const updateVisibility = (state: IntroAudioState) => {
       const p = window.location.pathname;
       const isHome = p === "/" || p === "/index.html";
-      wrap.classList.toggle("is-visible", !isHome && (state.playing || state.hasStarted));
+      wrap.classList.toggle(
+        "is-visible",
+        !isHome && (state.playing || state.hasStarted)
+      );
     };
 
     const render = (state: IntroAudioState) => {
@@ -374,7 +415,8 @@ const hasMusic = MUSIC_TRACKS.length > 0;
         now.setAttribute("title", state.label);
       }
       if (vol && document.activeElement !== vol) {
-        if (Number(vol.value) !== state.volume) vol.value = String(state.volume);
+        if (Number(vol.value) !== state.volume)
+          vol.value = String(state.volume);
       }
       if (artImg && state.artworkUrl) {
         if (artImg.getAttribute("data-artwork") !== state.artworkUrl) {

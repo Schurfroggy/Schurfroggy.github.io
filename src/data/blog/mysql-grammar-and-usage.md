@@ -19,7 +19,6 @@ tags:
 
 ## Table of contents
 
-
 ## 1.MySQL概述
 
 ### 相关概念
@@ -63,7 +62,7 @@ tags:
 
    单行注释:-- 注释内容或#注释内容(MySQL特有)
 
-   多行注释:/注释内容*/
+   多行注释:/注释内容\*/
 
 ### SQL语言分类
 
@@ -204,7 +203,7 @@ LIMIT 分页参数
 ```sql
 #查询多个字段
 SELECT 字段1，字段2，字段3，... FROM 表名;
-SELECT * FROM 表名; 
+SELECT * FROM 表名;
 #设置别名
 SELECT 字段1[AS 别名1]，字段2[AS 别名2]...FROM 表名;
 #去除重复记录
@@ -221,14 +220,14 @@ SELECT 字段列表 FROM 表名 WHERE 条件列表;
 
 ##### 条件
 
-| 比较运算符       | 功能                                   |
-| ---------------- | -------------------------------------- |
-| >,>=,<,<=,=      |                                        |
-| <>,!=            | 不等于                                 |
-| BETWEEN...AND... | 在某个范围之内(含最小，最大值)         |
-| IN(...)          | 在in之后的列表中的值，多选一           |
-| LIKE 占位符      | 模糊匹配(_匹配单个字符，%匹配多个字符) |
-| IS NULL          | 是NULL                                 |
+| 比较运算符       | 功能                                    |
+| ---------------- | --------------------------------------- |
+| >,>=,<,<=,=      |                                         |
+| <>,!=            | 不等于                                  |
+| BETWEEN...AND... | 在某个范围之内(含最小，最大值)          |
+| IN(...)          | 在in之后的列表中的值，多选一            |
+| LIKE 占位符      | 模糊匹配(\_匹配单个字符，%匹配多个字符) |
+| IS NULL          | 是NULL                                  |
 
 | 逻辑运算符 | 功能 |
 | ---------- | ---- |
@@ -318,16 +317,16 @@ DROP USER '用户名'@'主机名';
 
 ##### 常用权限
 
-| 权限               |        说明        |
-| :----------------- | :----------------: |
+| 权限                |        说明        |
+| :------------------ | :----------------: |
 | ALL, ALL PRIVILEGES |      所有权限      |
-| SELECT             |      查询数据      |
-| INSERT             |      插入数据      |
-| UPDATE             |      修改数据      |
-| DELETE             |      删除数据      |
-| ALTER              |       修改表       |
-| DROP               | 删除数据库/表/视图 |
-| CREATE             |   创建数据库/表    |
+| SELECT              |      查询数据      |
+| INSERT              |      插入数据      |
+| UPDATE              |      修改数据      |
+| DELETE              |      删除数据      |
+| ALTER               |       修改表       |
+| DROP                | 删除数据库/表/视图 |
+| CREATE              |   创建数据库/表    |
 
 ##### 权限控制方法
 
@@ -451,7 +450,7 @@ from score;
 
 目的：保证数据库中数据的正确、有效性和完整性。
 
-分类： 
+分类：
 
 | 约束     | 描述                                                     | 关键字      |
 | -------- | -------------------------------------------------------- | ----------- |
@@ -519,13 +518,13 @@ alter table emp drop foreign key fk_emp_dept_id;
 
 #### 删除/更新行为
 
-| 行为        | 说明                                                         |
-| ----------- | ------------------------------------------------------------ |
-| NO ACTION   | 当在父表中删除/更新对应记录时，首先检查该记录是否有对应外键，如果有则不允许删除/更新。(与RESTRICT一致) |
-| RESTRICT    | 当在父表中删除/更新对应记录时，首先检查该记录是否有对应外键，如果有则不允许删除/更新。(与NO ACTION一致) |
-| CASCADE     | 当在父表中删除/更新对应记录时，首先检查该记录是否有对应外键，如果有，则也删除/更新外键在子表中的记录 |
+| 行为        | 说明                                                                                                              |
+| ----------- | ----------------------------------------------------------------------------------------------------------------- |
+| NO ACTION   | 当在父表中删除/更新对应记录时，首先检查该记录是否有对应外键，如果有则不允许删除/更新。(与RESTRICT一致)            |
+| RESTRICT    | 当在父表中删除/更新对应记录时，首先检查该记录是否有对应外键，如果有则不允许删除/更新。(与NO ACTION一致)           |
+| CASCADE     | 当在父表中删除/更新对应记录时，首先检查该记录是否有对应外键，如果有，则也删除/更新外键在子表中的记录              |
 | SET NULL    | 当在父表中删除对应记录时，首先检查该记录是否有对应外键，如果有则设置子表中该外键值为nul(这就要求该外键允许取null) |
-| SET DEFAULT | 父表有变更时，子表将外键列设置成一个默认的值(Innodb不支持)   |
+| SET DEFAULT | 父表有变更时，子表将外键列设置成一个默认的值(Innodb不支持)                                                        |
 
 ```sql
 ALTER TABLE 表名 ADD CONSTRAINT 外键名称 FOREIGN KEY (外键字段名) REFERENCES 主表(主表列名) ON UPDATE CASCADE ON DELETE CASCADE;
@@ -537,9 +536,9 @@ ALTER TABLE 表名 ADD CONSTRAINT 外键名称 FOREIGN KEY (外键字段名) REF
 
 项目开发中，在进行数据库表结构设计时，会根据业务需求及业务模块之间的关系，分析并设计表结构，由于业务之间相互关联，所以各个表结构之间也存在着各种联系，基本上分为三种:
 
->一对多(多对一)：外键实现，多->一
->多对多：建立第三张中间表，中间表至少包含两个外键，分别关联两方主键
->一对一：在任意一方加入外键，关联另外一方的主键。并且设置外键为UNIQUE
+> 一对多(多对一)：外键实现，多->一
+> 多对多：建立第三张中间表，中间表至少包含两个外键，分别关联两方主键
+> 一对一：在任意一方加入外键，关联另外一方的主键。并且设置外键为UNIQUE
 
 #多表查询需要消除无效的笛卡尔积。
 
@@ -549,12 +548,10 @@ ALTER TABLE 表名 ADD CONSTRAINT 外键名称 FOREIGN KEY (外键字段名) REF
 
 - 内连接：相当于查询A、B交集部分数据
 
-
 - 外连接：
 
-
->左外连接：查询左表所有数据，以及两张表交集部分数据
->右外连接：查询右表所有数据，以及两张表交集部分数据
+> 左外连接：查询左表所有数据，以及两张表交集部分数据
+> 右外连接：查询右表所有数据，以及两张表交集部分数据
 
 - 自连接：当前表与自身的连接查询，自连接必须使用表别名
 
@@ -669,21 +666,21 @@ SELECT * FROM t1 WHERE column1 = (SELECT column1 FROM t2);
 
 由子查询结果不同，分为：
 
->标量子查询(子查询结果为单个值)
+> 标量子查询(子查询结果为单个值)
 >
->列子查询(子查询结果为一列)
+> 列子查询(子查询结果为一列)
 >
->行子查询(子查询结果为一行)
+> 行子查询(子查询结果为一行)
 >
->表子查询(子查询结果为多行多列)
+> 表子查询(子查询结果为多行多列)
 
 由子查询位置不同，分为：
 
->WHERE之后
+> WHERE之后
 >
->FROM之后
+> FROM之后
 >
->SELECT之后
+> SELECT之后
 
 #### i).标量子查询
 
@@ -749,7 +746,7 @@ select * from emp where salary > some ( select salary from emp where dept_id = (
 #### iii).行子查询
 
 - 子查询返回的结果是一行(可以是多列)，这种子查询称为行子查询
-- 常用操作符：=, <>, IN, NOT IN  
+- 常用操作符：=, <>, IN, NOT IN
 
 ```sql
 #
@@ -765,7 +762,7 @@ select * from emp where (salary,managerid) = (select salary, managerid from emp 
 
 - 子查询返回的结果是多行多列，这种子查询称为表子查询
 
-- 常用操作符：IN  
+- 常用操作符：IN
 
 ```sql
 #
@@ -996,19 +993,19 @@ rollback;
 
 ### 事务四大特性ACID
 
-| 特性                    | 解释                                                         |
-| ----------------------- | ------------------------------------------------------------ |
-| 原子性(**A**tomicity)   | 事务是不可分割的最小操作单元，要么全部成功，要么全部失败     |
-| 一致性(**C**onsistency) | 事务完成时，必须使所有的数据都保持一致状态                   |
+| 特性                    | 解释                                                                       |
+| ----------------------- | -------------------------------------------------------------------------- |
+| 原子性(**A**tomicity)   | 事务是不可分割的最小操作单元，要么全部成功，要么全部失败                   |
+| 一致性(**C**onsistency) | 事务完成时，必须使所有的数据都保持一致状态                                 |
 | 隔离性(**I**solation)   | 数据库系统提供的隔离机制，保证事务在不受外部并发操作影响下的独立环境下运行 |
-| 持久性(**D**urability)  | 事务一旦提交或回滚，它对数据库中的数据的改变就是永久的       |
+| 持久性(**D**urability)  | 事务一旦提交或回滚，它对数据库中的数据的改变就是永久的                     |
 
 ### 并发事务问题
 
-| 问题       | 描述                                                         |
-| ---------- | ------------------------------------------------------------ |
-| 脏读       | 一个事务读到另外一个事务还没有提交的数据                     |
-| 不可重复读 | 一个事务先后读取同一条数据，但两次读取的数据不同             |
+| 问题       | 描述                                                                                   |
+| ---------- | -------------------------------------------------------------------------------------- |
+| 脏读       | 一个事务读到另外一个事务还没有提交的数据                                               |
+| 不可重复读 | 一个事务先后读取同一条数据，但两次读取的数据不同                                       |
 | 幻读       | 一个事务按照条件查询数据时，没有对应的数据行，但是在插入数据时，又发现这行数据已经存在 |
 
 ### 事务隔离级别
@@ -1028,11 +1025,9 @@ select @@transaction_isolation;
 set [session|global] transaction isolation level {read uncommitted|read committed|repeatable read|serializable}
 ```
 
-
 ---
 
-*以下为进阶部分（存储引擎、索引、优化、视图、过程、触发器等）。*
-
+_以下为进阶部分（存储引擎、索引、优化、视图、过程、触发器等）。_
 
 ## 7.存储引擎
 
@@ -1040,29 +1035,23 @@ set [session|global] transaction isolation level {read uncommitted|read committe
 
 客户端连接器：Native C API, JDBC, ODBC, .NET, PHP, Python, Puby, Cobol
 
-
-
 - 连接层
 
 连接池：Authentication, Thread Reuse, Connection Limits, Check Memory, Caches
 
-*最上层是一些客户端和链接服务，主要完成一些类似于连接处理、授权认证、及相关的安全方案。服务器也会为安全接入的每个客户端验证它所具有的操作权限。*
-
-
+_最上层是一些客户端和链接服务，主要完成一些类似于连接处理、授权认证、及相关的安全方案。服务器也会为安全接入的每个客户端验证它所具有的操作权限。_
 
 - 服务层
 
->SQL接口：DML, DDL, Stored Procedures Views, Triggers, stc
+> SQL接口：DML, DDL, Stored Procedures Views, Triggers, stc
 >
->解析器：Query Translation, Object Privilege
+> 解析器：Query Translation, Object Privilege
 >
->查询优化器：Acess Paths. Statistics
+> 查询优化器：Acess Paths. Statistics
 >
->缓存：Global and Engine Specific Caches & Buffers
+> 缓存：Global and Engine Specific Caches & Buffers
 
-*第二层架构主要完成大多数的核心服务功能，如SQL接口，并完成缓存的查询，SQL的分析和优化，部分内置函数的执行。所有跨存储引擎的功能也在这一层实现，如 过程、函数等。*
-
-
+_第二层架构主要完成大多数的核心服务功能，如SQL接口，并完成缓存的查询，SQL的分析和优化，部分内置函数的执行。所有跨存储引擎的功能也在这一层实现，如 过程、函数等。_
 
 - 引擎层
 
@@ -1072,17 +1061,15 @@ Memory, Index&Storage Management
 
 InnoDB, MyISAM, NDB, Archive, Federated, Memory, Merge, Partner, Community, Custom
 
-*存储擎真正的负责了MySQL中数据的存储和提取，服务器通过AP和存储引擎进行通信。不同的存储引擎具有不同的功能，这样我们可以根据自己的需要，来选取合适的存储引擎。*
-
-
+_存储擎真正的负责了MySQL中数据的存储和提取，服务器通过AP和存储引擎进行通信。不同的存储引擎具有不同的功能，这样我们可以根据自己的需要，来选取合适的存储引擎。_
 
 - 存储层
 
->系统文件：NTFS, ufs, ext2/3, NFS, SAN, NAS
+> 系统文件：NTFS, ufs, ext2/3, NFS, SAN, NAS
 >
->文件和日志：Redo, Undo, Data, Index, Binary, Error, Query and Slow
+> 文件和日志：Redo, Undo, Data, Index, Binary, Error, Query and Slow
 
-*主要是将数据存储在文件系统之上，并完成与存储引擎的交互。*
+_主要是将数据存储在文件系统之上，并完成与存储引擎的交互。_
 
 ### 存储引擎简介
 
@@ -1110,11 +1097,12 @@ show create table 表名;
 
 - InnoDB是一种兼顾高可靠性和高性能的通用存储引擎。
 - 特点：
->DML操作遵循ACID模型，支持**事务**
->
->**行级锁**，提高并发访问性能
->
->支持**外键**FOREIGN KEY约束，保证数据的完整性和正确性
+
+  > DML操作遵循ACID模型，支持**事务**
+  >
+  > **行级锁**，提高并发访问性能
+  >
+  > 支持**外键**FOREIGN KEY约束，保证数据的完整性和正确性
 
 - 文件：xxx.ibd，innoDB引擎的每张表都会对应这样一个表空间文件，存储该表的表结构(frm、sdi)、数据和索引。参数：innodb_file_per_table
 
@@ -1141,18 +1129,19 @@ Row
 
 - MyISAM时MySQL早期默认的存储引擎
 - 特点：
->不支持事务，不支持外键
->
->支持表锁，不支持行锁
->
->访问速度快
+
+  > 不支持事务，不支持外键
+  >
+  > 支持表锁，不支持行锁
+  >
+  > 访问速度快
 
 - 文件：
->xxx.sdi：存储表结构信息
->
->xxx.MYD：存储数据
->
->xxx.MYI：存储索引
+  > xxx.sdi：存储表结构信息
+  >
+  > xxx.MYD：存储数据
+  >
+  > xxx.MYI：存储索引
 
 #### Memory
 
@@ -1202,9 +1191,9 @@ xxx.sdi：存储表结构信息
 
 - 索引特点：
 
-| 优势                                                         | 劣势                                                         |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 提高数据检索的效率，降低数据库的IO成本                       | 索引列也是要占用空间的。                                     |
+| 优势                                                          | 劣势                                                                                             |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| 提高数据检索的效率，降低数据库的IO成本                        | 索引列也是要占用空间的。                                                                         |
 | 通过索引列对数据进行排序，降低数据排序的成本，降低CPU的消耗。 | 索引大大提高了查询效率，同时却也降低更新表的速度，如对表进行INSERT、UPDATE、DELETE时，效率降低。 |
 
 ### 索引结构
@@ -1213,12 +1202,12 @@ xxx.sdi：存储表结构信息
 
 MySQL的索引是在存储引擎层实现的，不同的存储引擎有不同的索引结构，主要包含以下几种：
 
-| 索引结构            | 描述                                                         |
-| ------------------- | ------------------------------------------------------------ |
-| B+Tree索引          | 最常见的索引类型，大部分引擎都支持 B+ 树索引                 |
-| Hash索引            | 底层数据结构是用哈希表实现的, 只有精确匹配索引列的查询才有效, 不支持范围查询 |
+| 索引结构            | 描述                                                                           |
+| ------------------- | ------------------------------------------------------------------------------ |
+| B+Tree索引          | 最常见的索引类型，大部分引擎都支持 B+ 树索引                                   |
+| Hash索引            | 底层数据结构是用哈希表实现的, 只有精确匹配索引列的查询才有效, 不支持范围查询   |
 | R-tree(空间索引)    | 空间索引是MyISAM引擎的一个特殊索引类型，主要用于地理空间数据类型，通常使用较少 |
-| Full-text(全文索引) | 是一种通过建立倒排索引,快速匹配文档的方式。类似于Lucene,Solr,ES |
+| Full-text(全文索引) | 是一种通过建立倒排索引,快速匹配文档的方式。类似于Lucene,Solr,ES                |
 
 #### 引擎支持情况
 
@@ -1266,9 +1255,9 @@ MySQL的索引是在存储引擎层实现的，不同的存储引擎有不同的
 #创建索引
 CREATE [ UNIQUE | FULLTEXT ] INDEX index_name ON table_name (index_col_name,... ) ;
 #查看索引
-SHOW INDEX FROM table_name ; 
+SHOW INDEX FROM table_name ;
 #删除索引
-DROP INDEX index_name ON table_name ; 
+DROP INDEX index_name ON table_name ;
 
 #
 -- 先来创建一张表 tb_user，并且查询测试数据。
@@ -1373,7 +1362,7 @@ CREATE INDEX idx_user_pro_age_sta ON tb_user(profession,age,status);
 
 -- D. 为email建立合适的索引来提升查询效率。
 
-CREATE INDEX idx_email ON tb_user(email); 
+CREATE INDEX idx_email ON tb_user(email);
 ```
 
 ### SQL性能分析
@@ -1399,8 +1388,6 @@ SHOW GLOBAL STATUS LIKE 'Com_______';
 > Com_select: 查询次数
 >
 > Com_update: 更新次数
-
-
 
 通过上述指令，我们可以查看到当前数据库到底是以查询为主，还是以增删改为主，从而为数据
 
@@ -1512,16 +1499,16 @@ EXPLAIN SELECT 字段列表 FROM 表名 WHERE 条件 ;
 
 Explain 执行计划中各个字段的含义:
 
-| 字段         | 含义                                                         |
-| ------------ | ------------------------------------------------------------ |
-| id           | select查询的序列号，表示查询中执行select子句或者是操作表的顺序(id相同，执行顺序从上到下；id不同，值越大，越先执行)。 |
+| 字段         | 含义                                                                                                                                                                                                  |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| id           | select查询的序列号，表示查询中执行select子句或者是操作表的顺序(id相同，执行顺序从上到下；id不同，值越大，越先执行)。                                                                                  |
 | select_type  | 表示 SELECT 的类型，常见的取值有 SIMPLE（简单表，即不使用表连接或者子查询）、PRIMARY（主查询，即外层的查询）、UNION（UNION 中的第二个或者后面的查询语句）、SUBQUERY（SELECT/WHERE之后包含了子查询）等 |
-| type         | 表示连接类型，性能由好到差的连接类型为NULL、system、const、eq_ref、ref、range、 index、all 。UNION（UNION 中的第二个或者后面的查询语句）、 |
-| possible_key | 显示可能应用在这张表上的索引，一个或多个。                   |
-| key          | 实际使用的索引，如果为NULL，则没有使用索引。                 |
-| key_len      | 表示索引中使用的字节数， 该值为索引字段最大可能长度，并非实际使用长度，在不损失精确性的前提下， 长度越短越好 。 |
-| rows         | MySQL认为必须要执行查询的行数，在innodb引擎的表中，是一个估计值，可能并不总是准确的。 |
-| filtered     | 表示返回结果的行数占需读取行数的百分比， filtered 的值越大越好。 |
+| type         | 表示连接类型，性能由好到差的连接类型为NULL、system、const、eq_ref、ref、range、 index、all 。UNION（UNION 中的第二个或者后面的查询语句）、                                                            |
+| possible_key | 显示可能应用在这张表上的索引，一个或多个。                                                                                                                                                            |
+| key          | 实际使用的索引，如果为NULL，则没有使用索引。                                                                                                                                                          |
+| key_len      | 表示索引中使用的字节数， 该值为索引字段最大可能长度，并非实际使用长度，在不损失精确性的前提下， 长度越短越好 。                                                                                       |
+| rows         | MySQL认为必须要执行查询的行数，在innodb引擎的表中，是一个估计值，可能并不总是准确的。                                                                                                                 |
+| filtered     | 表示返回结果的行数占需读取行数的百分比， filtered 的值越大越好。                                                                                                                                      |
 
 ### 索引使用
 
@@ -1532,13 +1519,13 @@ Explain 执行计划中各个字段的含义:
 这张表中id为主键，有主键索引，而其他字段是没有建立索引的。 我们先来查询其中的一条记录，看看里面的字段情况，执行如下SQL：
 
 ```sql
-select * from tb_sku where id = 1\G; 
+select * from tb_sku where id = 1\G;
 ```
 
 可以看到即使有1000w的数据,根据id进行数据查询,性能依然很快，因为主键id是有索引的。 那么接下来，我们再来根据 sn 字段进行查询，执行如下SQL：
 
 ```sql
-SELECT * FROM tb_sku WHERE sn = '100000003145001'; 
+SELECT * FROM tb_sku WHERE sn = '100000003145001';
 ```
 
 我们可以看到根据sn字段进行查询，查询返回了一条数据，结果耗时 20.78sec，就是因为sn没有索引，而造成查询效率很低。
@@ -1550,7 +1537,7 @@ SELECT * FROM tb_sku WHERE sn = '100000003145001';
 然后再次执行相同的SQL语句，再次查看SQL的耗时。
 
 ```sql
-create index idx_sku_sn on tb_sku(sn) ; 
+create index idx_sku_sn on tb_sku(sn) ;
 ```
 
 然后再次执行相同的SQL语句，再次查看SQL的耗时。
@@ -1580,7 +1567,7 @@ explain select * from tb_user where profession = '软件工程';
 
 explain select * from tb_user where age = 31 and status = '0';
 
-explain select * from tb_user where status = '0'; 
+explain select * from tb_user where status = '0';
 
 #而通过上面的这两组测试，我们也可以看到索引并未生效，原因是因为不满足最左前缀法则，联合索引最左边的列profession不存在。
 
@@ -1663,7 +1650,7 @@ explain select * from tb_user force index(idx_user_Pro) where profession = 'fkjv
 
 #### 覆盖索引
 
-- 尽量使用覆盖索引(查询使用了索引，并且需要返回的列，在该索引中已经全部能够找到)，减少select *。
+- 尽量使用覆盖索引(查询使用了索引，并且需要返回的列，在该索引中已经全部能够找到)，减少select \*。
 
 > using index condition：查找使用了索引，但是需要回表查询数据
 > using where, using index：查找使用了索引，但是需要的数据在索引中都能找到，不需要进行回表查询
@@ -1679,20 +1666,20 @@ explain select * from tb_user where profession = '软件工程' and age = 31 and
 
 从上述的执行计划我们可以看到，这四条SQL语句的执行计划前面所有的指标都是一样的，看不出来差异。但是此时，我们主要关注的是后面的Extra，前面两天SQL的结果为 Using where; Using Index ; 而后面两条SQL的结果为: Using index condition 。
 
-| Extra                    | 含义                                                         |
-| ------------------------ | ------------------------------------------------------------ |
+| Extra                    | 含义                                                                     |
+| ------------------------ | ------------------------------------------------------------------------ |
 | Using where; Using Index | 查找使用了索引，但是需要的数据都在索引列中能找到，所以不需要回表查询数据 |
-| Using index condition    | 查找使用了索引，但是需要回表查询数据                         |
+| Using index condition    | 查找使用了索引，但是需要回表查询数据                                     |
 
-> 因为，在tb_user表中有一个联合索引 idx_user_pro_age_sta，该索引关联了三个字段 profession、age、status，而这个索引也是一个二级索引，所以叶子节点下面挂的是这一行的主 键id。 所以当我们查询返回的数据在 id、profession、age、status 之中，则直接走二级索引 直接返回数据了。 如果超出这个范围，就需要拿到主键id，再去扫描聚集索引，再获取额外的数据了，这个过程就是回表。 而我们如果一直使用select * 查询返回所有字段值，很容易就会造成回表 查询（除非是根据主键查询，此时只会扫描聚集索引）。
+> 因为，在tb_user表中有一个联合索引 idx_user_pro_age_sta，该索引关联了三个字段 profession、age、status，而这个索引也是一个二级索引，所以叶子节点下面挂的是这一行的主 键id。 所以当我们查询返回的数据在 id、profession、age、status 之中，则直接走二级索引 直接返回数据了。 如果超出这个范围，就需要拿到主键id，再去扫描聚集索引，再获取额外的数据了，这个过程就是回表。 而我们如果一直使用select \* 查询返回所有字段值，很容易就会造成回表 查询（除非是根据主键查询，此时只会扫描聚集索引）。
 
 思考题：
 
-   一张表, 有四个字段(id, username, password, status), 由于数据量大, 需要对 以下SQL语句进行优化, 该如何进行才是最优方案: 
+一张表, 有四个字段(id, username, password, status), 由于数据量大, 需要对 以下SQL语句进行优化, 该如何进行才是最优方案:
 
-select id,username,password from tb_user where username = 'itcast'; 
+select id,username,password from tb_user where username = 'itcast';
 
-  答案: 针对于 username, password建立联合索引, sql为: create index idx_user_name_pass on tb_user(username,password); 这样可以避免上述的SQL语句，在查询的过程中，出现回表查询。
+答案: 针对于 username, password建立联合索引, sql为: create index idx_user_name_pass on tb_user(username,password); 这样可以避免上述的SQL语句，在查询的过程中，出现回表查询。
 
 #### 前缀索引
 
@@ -1721,7 +1708,7 @@ select count(distinct substring(email,1,5)) / count(*) from tb_user ;
 
 #### 单列索引与联合索引
 
-> 单列索引：即一个索引只包含单个列。 
+> 单列索引：即一个索引只包含单个列。
 >
 > 联合索引：即一个索引包含了多个列。
 
@@ -1729,17 +1716,17 @@ select count(distinct substring(email,1,5)) / count(*) from tb_user ;
 
 ### 索引设计原则
 
-1. 针对于数据量较大，且查询比较频繁的表建立索引。 
+1. 针对于数据量较大，且查询比较频繁的表建立索引。
 
-2. 针对于常作为查询条件（where）、排序（order by）、分组（group by）操作的字段建立索 引。 
+2. 针对于常作为查询条件（where）、排序（order by）、分组（group by）操作的字段建立索 引。
 
 3. 尽量选择区分度高的列作为索引，尽量建立唯一索引，区分度越高，使用索引的效率越高。
 
-4. 如果是字符串类型的字段，字段的长度较长，可以针对于字段的特点，建立前缀索引。 
+4. 如果是字符串类型的字段，字段的长度较长，可以针对于字段的特点，建立前缀索引。
 
 5. 尽量使用联合索引，减少单列索引，查询时，联合索引很多时候可以覆盖索引，节省存储空间， 避免回表，提高查询效率。
 
-6. 要控制索引的数量，索引并不是多多益善，索引越多，维护索引结构的代价也就越大，会影响增 删改的效率。 1 create unique index idx_user_phone_name on tb_user(phone,name); 
+6. 要控制索引的数量，索引并不是多多益善，索引越多，维护索引结构的代价也就越大，会影响增 删改的效率。 1 create unique index idx_user_phone_name on tb_user(phone,name);
 
 7. 如果索引列不能存储NULL值，请在创建表时使用NOT NULL约束它。当优化器知道每列是否包含 NULL值时，它可以更好地确定哪个索引最有效地用于查询。
 
@@ -1758,16 +1745,6 @@ select count(distinct substring(email,1,5)) / count(*) from tb_user ;
 ### count优化
 
 ### update优化
-
-
-
-
-
-
-
-
-
-
 
 ## 10.视图
 
@@ -1826,13 +1803,13 @@ drop view if exists stu_v_1;
 
 要使视图可更新，视图中的行与基础表中的行之间必须存在一对一的关系。如果视图包含以下任何一 项，则该视图不可更新：
 
-> A. 聚合函数或窗口函数（SUM()、 MIN()、 MAX()、 COUNT()等） 
+> A. 聚合函数或窗口函数（SUM()、 MIN()、 MAX()、 COUNT()等）
 >
-> B. DISTINCT 
+> B. DISTINCT
 >
-> C. GROUP BY 
+> C. GROUP BY
 >
-> D. HAVING 
+> D. HAVING
 >
 > E. UNION 或者 UNION ALL
 
@@ -1871,8 +1848,6 @@ create view tb_stu_course_view as select s.name student_name, s.no student_no , 
 select * from tb_stu_course_view;
 ```
 
-
-
 ## 11.存储过程
 
 ### 介绍
@@ -1883,7 +1858,7 @@ select * from tb_stu_course_view;
 
 > 封装，复用 -----------------------> 可以把某一业务SQL封装在存储过程中，需要用到 的时候直接调用即可
 >
-> 可以接收参数，也可以返回数据 --------> 再存储过程中，可以传递参数，也可以接收返回 值。 
+> 可以接收参数，也可以返回数据 --------> 再存储过程中，可以传递参数，也可以接收返回 值。
 >
 > 减少网络交互，效率提升 -------------> 如果涉及到多条SQL，每执行一次都是一次网络传 输。 而如果封装在存储过程中，我们只需要网络交互一次可能就可以了。
 
@@ -1909,7 +1884,7 @@ DROP PROCEDURE [ IF EXISTS ] 存储过程名称;
   ```sql
   #
   delimiter $$;
-  
+
   #
   create procedure p1()
   begin
@@ -1956,7 +1931,7 @@ SET @@[SESSION | GLOBAL]系统变量名 = 值 ;
 
 - mysql服务重新启动之后，所设置的全局参数会失效，要想不失效，可以在 /etc/my.cnf 中配置。
 
-> A. 全局变量(GLOBAL): 全局变量针对于所有的会话。 
+> A. 全局变量(GLOBAL): 全局变量针对于所有的会话。
 >
 > B. 会话变量(SESSION): 会话变量针对于单个会话，在另外一个会话窗口就不生效了。
 
@@ -2345,7 +2320,7 @@ DECLARE handler_action HANDLER FOR condition_value [, condition_value] ... state
   EXIT -- 终止执行当前程序
 #condition_value 的取值：
   SQLSTATE sqlstate_value -- 状态码，如 02000
-  
+
 SQLWARNING -- 所有以01开头的SQLSTATE代码的简写
 NOT FOUND -- 所有以02开头的SQLSTATE代码的简写
 SQLEXCEPTION -- 所有没有被SQLWARNING 或 NOT FOUND捕获的SQLSTATE代码的简写
@@ -2438,7 +2413,7 @@ call p12(30);
 
 ```sql
 #创建
-CREATE TRIGGER trigger_name  
+CREATE TRIGGER trigger_name
     BEFORE/AFTER    INSERT/UPDATE/DELETE
 ON tbl_name FOR EACH ROW -- 行级触发器
 BEGIN
@@ -2506,4 +2481,3 @@ show triggers ;
 -- 删除数据
 delete from tb_user where id = 26;
 ```
-

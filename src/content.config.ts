@@ -5,6 +5,7 @@ import { SITE } from "@/config";
 
 export const BLOG_PATH = "src/data/blog";
 export const GALLERY_PATH = "src/data/galleries";
+export const MOMENTS_PATH = "src/data/moments";
 
 const blog = defineCollection({
   loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: `./${BLOG_PATH}` }),
@@ -38,4 +39,16 @@ const galleries = defineCollection({
     }),
 });
 
-export const collections = { blog, galleries };
+const moments = defineCollection({
+  loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: `./${MOMENTS_PATH}` }),
+  schema: () =>
+    z.object({
+      title: z.string().optional(),
+      pubDatetime: z.date(),
+      modDatetime: z.date().optional().nullable(),
+      draft: z.boolean().optional(),
+      timezone: z.string().optional(),
+    }),
+});
+
+export const collections = { blog, galleries, moments };

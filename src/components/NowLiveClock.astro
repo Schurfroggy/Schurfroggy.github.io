@@ -1,0 +1,213 @@
+---
+import { SITE } from "@/config";
+
+const { timezone } = SITE;
+const tzShort = timezone.split("/").pop() ?? timezone;
+---
+
+<div
+  id="now-clock-root"
+  class="now-live-clock relative w-full min-w-0 sm:max-w-[min(100%,22rem)] sm:shrink-0"
+  data-timezone={timezone}
+  role="status"
+  aria-label={`Live local clock (${timezone}, 24h)`}
+>
+  <div
+    class="now-terminal relative flex min-h-0 flex-col overflow-hidden rounded-xl border border-border/40 bg-gradient-to-b from-[#0d0d0f] to-[#12141a] text-left shadow-[0_1px_0_0] ring-1 shadow-white/5 ring-white/5 ring-inset"
+  >
+    <div
+      class="flex items-center gap-2 border-b border-white/[0.07] bg-gradient-to-b from-[#1a1d24] to-[#14151a] px-2.5 py-1.5 select-none"
+      aria-hidden="true"
+    >
+      <span class="flex items-center gap-1">
+        <span class="h-2.5 w-2.5 rounded-full bg-[#ff5f57] opacity-90 shadow-sm"
+        ></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-[#febc2e] opacity-90 shadow-sm"
+        ></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-[#28c840] opacity-90 shadow-sm"
+        ></span>
+      </span>
+      <span
+        class="truncate [font-family:var(--font-cascadia-code),ui-monospace,monospace] text-[0.62rem] text-[#6e7680]"
+      >
+        clock — zsh
+      </span>
+    </div>
+
+    <div
+      class="now-terminal__body relative min-h-[5rem] border-t border-border/20 bg-gradient-to-b from-[#0a0a0c] to-[#0e1014] px-3 py-2.5 [font-family:var(--font-cascadia-code),ui-monospace,monospace] text-[#3ecf8e] sm:min-h-0 sm:px-3.5 sm:py-3"
+    >
+      <div
+        class="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.1)_2px,transparent_3px)] from-emerald-400/12 [mask-image:linear-gradient(180deg,black,transparent_85%)] opacity-40 dark:opacity-50"
+        aria-hidden="true"
+      >
+      </div>
+      <p
+        class="mb-2.5 [font-size:0.6rem] leading-tight text-[#6e9b7e]/90 [text-shadow:0_0_0_rgba(62,207,142,0.2)] sm:text-[0.65rem] sm:leading-normal dark:text-[#5a8f6a]/95"
+        aria-hidden="true"
+      >
+        <span class="text-[#3ecf8e]/50">$</span>{" "}
+        <span>date &apos;+%H:%M:%S&apos; · {tzShort}</span>
+      </p>
+      <div
+        class="flex flex-wrap items-baseline gap-0.5 [font-size:clamp(1.2rem,3.5vw+0.1rem,1.85rem)] [text-shadow:0_0_24px_rgba(62,207,142,0.2)] dark:[text-shadow:0_0_20px_rgba(74,222,128,0.18)]"
+      >
+        <time
+          class="flex w-full min-w-0 items-baseline gap-0.5 tabular-nums"
+          id="now-clock-time"
+        >
+          <span class="text-[#8cf5c0]" id="now-clock-h">--</span>
+          <span
+            class="[animation:now-ter-blink_1.1s_steps(2,end)_infinite] text-[#3a7a56]/80 select-none dark:text-[#3d6b4f]/80"
+            aria-hidden="true">:</span
+          >
+          <span class="text-[#8cf5c0]" id="now-clock-m">--</span>
+          <span
+            class="[animation:now-ter-blink_1.1s_steps(2,end)_infinite] text-[#3a7a56]/80 select-none [animation-delay:0.1s] dark:text-[#3d6b4f]/80"
+            aria-hidden="true">:</span
+          >
+          <span
+            class="now-live-clock__sec [animation:now-ter-sec-breathe_2.2s_ease-in-out_infinite] font-semibold text-[#b1ffd9]"
+            id="now-clock-s"
+          >
+            --</span
+          >
+          <span
+            class="now-ter-cursor -mb-0.5 ml-0.5 inline-block [height:0.8em] w-[0.4em] bg-[#8cf5c0] align-baseline sm:[height:0.85em] sm:w-[0.45em]"
+            aria-hidden="true"></span>
+        </time>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  @media (prefers-reduced-motion: reduce) {
+    .now-live-clock [class*="[animation:"],
+    .now-ter-cursor,
+    .now-live-clock__sec--tick {
+      animation: none !important;
+    }
+  }
+
+  .now-ter-cursor {
+    animation: now-ter-cursor 1.05s steps(1, end) infinite;
+  }
+
+  @keyframes now-ter-cursor {
+    0%,
+    49% {
+      opacity: 0.9;
+    }
+    50%,
+    100% {
+      opacity: 0.1;
+    }
+  }
+
+  @keyframes now-ter-blink {
+    0%,
+    49% {
+      opacity: 0.4;
+    }
+    50%,
+    100% {
+      opacity: 0.88;
+    }
+  }
+
+  @keyframes now-ter-sec-breathe {
+    0%,
+    100% {
+      text-shadow: 0 0 8px color-mix(in srgb, #3ecf8e 35%, transparent 65%);
+    }
+    50% {
+      text-shadow: 0 0 16px color-mix(in srgb, #3ecf8e 55%, transparent 45%);
+    }
+  }
+
+  @keyframes now-ter-tick {
+    0%,
+    100% {
+      transform: scale(1);
+      text-shadow: 0 0 8px color-mix(in srgb, #3ecf8e 45%, transparent 55%);
+    }
+    35% {
+      transform: scale(1.05);
+      text-shadow: 0 0 22px color-mix(in srgb, #b1ffd9 50%, #3ecf8e 30%);
+    }
+  }
+
+  .now-live-clock__sec--tick {
+    animation: now-ter-tick 0.45s ease-out !important;
+  }
+</style>
+
+<script is:inline>
+  function initDevosferaNowClock() {
+    if (window.__devosferaNowClockIid) {
+      clearInterval(window.__devosferaNowClockIid);
+      window.__devosferaNowClockIid = 0;
+    }
+    const root = document.getElementById("now-clock-root");
+    if (!root) {
+      return;
+    }
+    const hEl = document.getElementById("now-clock-h");
+    const mEl = document.getElementById("now-clock-m");
+    const sEl = document.getElementById("now-clock-s");
+    const tEl = document.getElementById("now-clock-time");
+    if (!hEl || !mEl || !sEl || !tEl) {
+      return;
+    }
+    const timeZone = root.getAttribute("data-timezone");
+    if (!timeZone) {
+      return;
+    }
+    var last = "";
+    function getParts(d) {
+      const fmt = new Intl.DateTimeFormat("en-GB", {
+        timeZone: timeZone,
+        hour: "2-digit",
+        hour12: false,
+        minute: "2-digit",
+        second: "2-digit",
+      });
+      const p = fmt.formatToParts(d);
+      const v = function (t) {
+        const f = p.find(function (x) {
+          return x.type === t;
+        });
+        if (!f || !f.value) {
+          return "00";
+        }
+        const s = f.value;
+        if (s.length < 2 && /^\d$/.test(s)) {
+          return "0" + s;
+        }
+        return s;
+      };
+      return { h: v("hour"), m: v("minute"), s: v("second") };
+    }
+    function tick() {
+      const parts = getParts(new Date());
+      hEl.textContent = parts.h;
+      mEl.textContent = parts.m;
+      sEl.textContent = parts.s;
+      tEl.setAttribute("datetime", new Date().toISOString());
+      if (parts.s !== last) {
+        sEl.classList.remove("now-live-clock__sec--tick");
+        sEl.offsetWidth;
+        sEl.classList.add("now-live-clock__sec--tick");
+        setTimeout(function () {
+          sEl.classList.remove("now-live-clock__sec--tick");
+        }, 520);
+      }
+      last = parts.s;
+    }
+    tick();
+    window.__devosferaNowClockIid = setInterval(tick, 1000);
+  }
+  initDevosferaNowClock();
+  document.addEventListener("astro:page-load", initDevosferaNowClock);
+</script>

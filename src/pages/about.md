@@ -25,4 +25,4 @@ I love **roguelike and card games**—they blend strategy, randomness, and repla
 
 Here is where I document my learning journey after graduate school, share technical insights, and connect with others who love development and tech.
 
-> _Never Gonna Give You Up.._ 
+> _Never Gonna Give You Up.._

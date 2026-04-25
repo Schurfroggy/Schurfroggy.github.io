@@ -143,34 +143,33 @@ XML 文档中的元素形成了一棵文档树。这棵树从根部开始，并�
 
 所有的元素都可以有文本内容和属性（类似 HTML 中）。
 
-实例：＞ *（原笔记中的树形示意图为本地路径，已省略；可参考任意 XML 元素父子关系图。）*
-
-
+实例：＞ _（原笔记中的树形示意图为本地路径，已省略；可参考任意 XML 元素父子关系图。）_
 
 上图表示下面的 XML 中的一本书：
 
 XML 文档实例
 
 ＜bookstore＞
-    ＜book category="COOKING"＞
-        ＜title lang="en"＞Everyday Italian＜/title＞
-​        ＜author＞Giada De Laurentiis＜/author＞
-​        ＜year＞2005＜/year＞
-​        ＜price＞30.00＜/price＞
-​    ＜/book＞
-​    ＜book category="CHILDREN"＞
-        ＜title lang="en"＞Harry Potter＜/title＞
-​        ＜author＞J K. Rowling＜/author＞
-​        ＜year＞2005＜/year＞
-​        ＜price＞29.99＜/price＞
-​    ＜/book＞
-​    ＜book category="WEB"＞
+＜book category="COOKING"＞
+＜title lang="en"＞Everyday Italian＜/title＞
+​ ＜author＞Giada De Laurentiis＜/author＞
+​ ＜year＞2005＜/year＞
+​ ＜price＞30.00＜/price＞
+​ ＜/book＞
+​ ＜book category="CHILDREN"＞
+＜title lang="en"＞Harry Potter＜/title＞
+​ ＜author＞J K. Rowling＜/author＞
+​ ＜year＞2005＜/year＞
+​ ＜price＞29.99＜/price＞
+​ ＜/book＞
+​ ＜book category="WEB"＞
 
         ＜title lang="en"＞Learning XML＜/title＞
-​        ＜author＞Erik T. Ray＜/author＞
-​        ＜year＞2003＜/year＞
-​        ＜price＞39.95＜/price＞
-​    ＜/book＞
+
+​ ＜author＞Erik T. Ray＜/author＞
+​ ＜year＞2003＜/year＞
+​ ＜price＞39.95＜/price＞
+​ ＜/book＞
 ＜/bookstore＞
 
 实例中的根元素是 ＜bookstore＞。文档中的所有 ＜book＞ 元素都被包含在 ＜bookstore＞ 中。
@@ -186,18 +185,18 @@ XML 的语法规则很简单，且很有逻辑。这些规则很容易学习，�
 XML 必须包含根元素，它是所有其他元素的父元素，比如以下实例中 root 就是根元素：
 
 ＜root＞
-  ＜child＞
-    ＜subchild＞.....＜/subchild＞
-  ＜/child＞
+＜child＞
+＜subchild＞.....＜/subchild＞
+＜/child＞
 ＜/root＞
 以下实例中 note 是根元素：
 
 ＜?xml version="1.0" encoding="UTF-8"?＞
 ＜note＞
-  ＜to＞Tove＜/to＞
-  ＜from＞Jani＜/from＞
-  ＜heading＞Reminder＜/heading＞
-  ＜body＞Don't forget me this weekend!＜/body＞
+＜to＞Tove＜/to＞
+＜from＞Jani＜/from＞
+＜heading＞Reminder＜/heading＞
+＜body＞Don't forget me this weekend!＜/body＞
 ＜/note＞
 
 ### 2.XML 声明
@@ -215,7 +214,6 @@ XML 声明文件的可选部分，如果存在需要放在文档的第一行，�
 ＜br＞
 
 在 XML 中，省略关闭标签是非法的。所有元素都必须有关闭标签：
-
 
 ＜p＞This is a paragraph.＜/p＞
 ＜br /＞
@@ -271,11 +269,11 @@ XML 标签对大小写敏感。标签 ＜Letter＞ 与标签 ＜letter＞ 是不
 ＜message＞if salary &lt; 1000 then＜/message＞
 在 XML 中，有 5 个预定义的实体引用：
 
-&lt;	＜	less than
-&gt;	＞	greater than
-&amp;	&	ampersand
-&apos;	'	apostrophe
-&quot;	"	quotation mark
+&lt; ＜ less than
+&gt; ＞ greater than
+&amp; & ampersand
+&apos; ' apostrophe
+&quot; " quotation mark
 注释：在 XML 中，只有字符 "＜" 和 "&" 确实是非法的。大于号是合法的，但是用实体引用来代替它是一个好习惯。
 
 ### 8.XML 中的注释
@@ -288,9 +286,9 @@ XML 标签对大小写敏感。标签 ＜Letter＞ 与标签 ＜letter＞ 是不
 
 HTML 会把多个连续的空格字符裁减（合并）为一个：
 
-HTML:	
-Hello           Tove
-输出结果:	Hello Tove
+HTML:
+Hello Tove
+输出结果: Hello Tove
 在 XML 中，文档中的空格不会被删减。
 
 ## 五、XML 元素
@@ -306,20 +304,22 @@ XML 元素指的是从（且包括）开始标签直到（且包括）结束标�
 属性
 或混合以上所有...
 ＜bookstore＞
-    ＜book category="CHILDREN"＞
+＜book category="CHILDREN"＞
 
         ＜title＞Harry Potter＜/title＞
-​        ＜author＞J K. Rowling＜/author＞
-​        ＜year＞2005＜/year＞
-​        ＜price＞29.99＜/price＞
-​    ＜/book＞
-​    ＜book category="WEB"＞
+
+​ ＜author＞J K. Rowling＜/author＞
+​ ＜year＞2005＜/year＞
+​ ＜price＞29.99＜/price＞
+​ ＜/book＞
+​ ＜book category="WEB"＞
 
         ＜title＞Learning XML＜/title＞
-​        ＜author＞Erik T. Ray＜/author＞
-​        ＜year＞2003＜/year＞
-​        ＜price＞39.95＜/price＞
-​    ＜/book＞
+
+​ ＜author＞Erik T. Ray＜/author＞
+​ ＜year＞2003＜/year＞
+​ ＜price＞39.95＜/price＞
+​ ＜/book＞
 ＜/bookstore＞
 在上面的实例中，＜bookstore＞ 和 ＜book＞ 都有 元素内容，因为他们包含其他元素。＜book＞ 元素也有属性（category="CHILDREN"）。＜title＞、＜author＞、＜year＞ 和 ＜price＞ 有文本内容，因为他们包含文本。
 
@@ -350,9 +350,9 @@ XML 元素是可扩展，以携带更多的信息。
 请看下面的 XML 实例：
 
 ＜note＞
-    ＜to＞Tove＜/to＞
-    ＜from＞Jani＜/from＞
-    ＜body＞Don't forget me this weekend!＜/body＞
+＜to＞Tove＜/to＞
+＜from＞Jani＜/from＞
+＜body＞Don't forget me this weekend!＜/body＞
 ＜/note＞
 让我们设想一下，我们创建了一个应用程序，可将 ＜to＞、＜from＞ 以及 ＜body＞ 元素从 XML 文档中提取出来，并产生以下的输出：
 
@@ -364,13 +364,12 @@ Don't forget me this weekend!
 
 想象一下，XML 文档的作者添加的一些额外信息：
 
-
 ＜note＞
-    ＜date＞2008-01-10＜/date＞
-    ＜to＞Tove＜/to＞
-    ＜from＞Jani＜/from＞
-    ＜heading＞Reminder＜/heading＞
-    ＜body＞Don't forget me this weekend!＜/body＞
+＜date＞2008-01-10＜/date＞
+＜to＞Tove＜/to＞
+＜from＞Jani＜/from＞
+＜heading＞Reminder＜/heading＞
+＜body＞Don't forget me this weekend!＜/body＞
 ＜/note＞
 那么这个应用程序会中断或崩溃吗？
 
@@ -417,8 +416,6 @@ XML元素具有属性，类似 HTML。
 ＜firstname＞Anna＜/firstname＞
 ＜lastname＞Smith＜/lastname＞
 ＜/person＞
-
- 
 
 ＜person＞
 ＜sex＞female＜/sex＞
@@ -734,4 +731,3 @@ document.write("＜/table＞");
 ————————————————
 版权声明：本文为CSDN博主「骑摩托的蜗牛」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
 原文链接：https://blog.csdn.net/m0_58859743/article/details/125113744
-

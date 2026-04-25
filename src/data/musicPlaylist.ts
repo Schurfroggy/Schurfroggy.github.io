@@ -13,11 +13,14 @@ const audioModules = import.meta.glob<string>("../assets/music/*.mp3", {
   query: "?url",
 });
 
-const imageModules = import.meta.glob<string>("../assets/music/*.{png,jpg,jpeg,webp,svg}", {
-  eager: true,
-  import: "default",
-  query: "?url",
-});
+const imageModules = import.meta.glob<string>(
+  "../assets/music/*.{png,jpg,jpeg,webp,svg}",
+  {
+    eager: true,
+    import: "default",
+    query: "?url",
+  }
+);
 
 const pathNoExt = (p: string) => {
   const i = p.lastIndexOf(".");
@@ -38,7 +41,11 @@ function filenameToLabel(path: string): string {
   return base.replace(/\.mp3$/i, "").replace(/_/g, " ");
 }
 
-export type MusicTrack = { src: string; label: string; /** Resolved cover image URL */ artwork: string };
+export type MusicTrack = {
+  src: string;
+  label: string;
+  /** Resolved cover image URL */ artwork: string;
+};
 
 export const MUSIC_TRACKS: MusicTrack[] = Object.entries(audioModules)
   .map(([path, src]) => {

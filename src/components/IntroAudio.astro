@@ -50,10 +50,13 @@ const hasMusic = MUSIC_TRACKS.length > 0;
             title="Previous track"
             aria-label="Previous track"
           >
-            <svg class="intro-audio-ctrl-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-              <path
-                d="M1.5 2.5H3.5V13.5H1.5V2.5zM4 8L12.5 2.5V13.5L4 8z"
-              />
+            <svg
+              class="intro-audio-ctrl-icon"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M1.5 2.5H3.5V13.5H1.5V2.5zM4 8L12.5 2.5V13.5L4 8z" />
             </svg>
           </button>
 
@@ -70,9 +73,7 @@ const hasMusic = MUSIC_TRACKS.length > 0;
               fill="currentColor"
               aria-hidden="true"
             >
-              <path
-                d="M3 2.5a.5.5 0 0 1 .765-.424l10 5.5a.5.5 0 0 1 0 .848l-10 5.5A.5.5 0 0 1 3 13.5v-11z"
-              />
+              <path d="M3 2.5a.5.5 0 0 1 .765-.424l10 5.5a.5.5 0 0 1 0 .848l-10 5.5A.5.5 0 0 1 3 13.5v-11z" />
             </svg>
             <svg
               id="intro-icon-pause"
@@ -81,9 +82,7 @@ const hasMusic = MUSIC_TRACKS.length > 0;
               fill="currentColor"
               aria-hidden="true"
             >
-              <path
-                d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"
-              />
+              <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z" />
             </svg>
           </button>
 
@@ -94,7 +93,12 @@ const hasMusic = MUSIC_TRACKS.length > 0;
             title="Next track"
             aria-label="Next track"
           >
-            <svg class="intro-audio-ctrl-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <svg
+              class="intro-audio-ctrl-icon"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              aria-hidden="true"
+            >
               <path d="M3 2.5L11.5 8 3 13.5V2.5zM12 2.5h2.5v11H12v-11z" />
             </svg>
           </button>
@@ -111,7 +115,9 @@ const hasMusic = MUSIC_TRACKS.length > 0;
           </button>
 
           <div class="intro-audio-vol" title="Volume">
-            <span class="intro-audio-vol-icon" aria-hidden="true">▮</span>
+            <span class="intro-audio-vol-icon" aria-hidden="true">
+              ▮
+            </span>
             <input
               id="intro-audio-vol"
               class="intro-audio-vol-range"
@@ -135,7 +141,9 @@ const hasMusic = MUSIC_TRACKS.length > 0;
         </div>
 
         <p class="intro-audio-mid" id="intro-now-line">
-          <span class="intro-label" id="intro-now-label" title="">LOADING…</span>
+          <span class="intro-label" id="intro-now-label" title="">
+            LOADING…
+          </span>
         </p>
 
         <div class="intro-audio-bottom">
@@ -153,12 +161,13 @@ const hasMusic = MUSIC_TRACKS.length > 0;
               <div class="intro-progress-bar" id="intro-progress-bar" />
             </div>
             <span class="intro-time" id="intro-time" aria-live="off">
-              <span id="intro-current">0:00</span><span class="opacity-30"> /</span><span
-                id="intro-total"
-                class="opacity-30"
-              >
-                0:00
-              </span>
+              <>
+                <span id="intro-current">0:00</span>
+                <span class="opacity-30"> /</span>
+                <span id="intro-total" class="opacity-30">
+                  0:00
+                </span>
+              </>
             </span>
           </div>
         </div>
@@ -192,7 +201,8 @@ const hasMusic = MUSIC_TRACKS.length > 0;
   .intro-audio-wrap.playing {
     border-color: color-mix(in oklab, var(--accent) 55%, transparent);
     background: color-mix(in oklab, var(--accent) 6%, transparent);
-    box-shadow: 0 0 18px -4px color-mix(in oklab, var(--accent) 20%, transparent);
+    box-shadow: 0 0 18px -4px
+      color-mix(in oklab, var(--accent) 20%, transparent);
   }
 
   .intro-audio-art-col {
@@ -304,7 +314,10 @@ const hasMusic = MUSIC_TRACKS.length > 0;
     color: var(--accent);
     cursor: pointer;
     flex-shrink: 0;
-    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    transition:
+      background 0.2s,
+      border-color 0.2s,
+      transform 0.15s;
   }
   .intro-audio-icon-btn:hover {
     background: color-mix(in oklab, var(--accent) 12%, transparent);
@@ -542,20 +555,48 @@ const hasMusic = MUSIC_TRACKS.length > 0;
 
   function initIntroAudio() {
     if (MUSIC_TRACKS.length === 0) return;
-    const wrap = document.getElementById("intro-audio-player") as HTMLElement | null;
-    const btn = document.getElementById("intro-audio-btn") as HTMLButtonElement | null;
-    const btnPrev = document.getElementById("intro-audio-btn-prev") as HTMLButtonElement | null;
-    const btnNext = document.getElementById("intro-audio-btn-next") as HTMLButtonElement | null;
-    const modeBtn = document.getElementById("intro-audio-mode-btn") as HTMLButtonElement | null;
-    const vol = document.getElementById("intro-audio-vol") as HTMLInputElement | null;
-    const iconPlay = document.getElementById("intro-icon-play") as SVGElement | null;
-    const iconPause = document.getElementById("intro-icon-pause") as SVGElement | null;
-    const bar = document.getElementById("intro-progress-bar") as HTMLElement | null;
-    const track = document.getElementById("intro-progress-track") as HTMLElement | null;
-    const current = document.getElementById("intro-current") as HTMLElement | null;
-    const totalLabel = document.getElementById("intro-total") as HTMLElement | null;
-    const nowLabel = document.getElementById("intro-now-label") as HTMLElement | null;
-    const artImg = document.getElementById("intro-audio-art-img") as HTMLImageElement | null;
+    const wrap = document.getElementById(
+      "intro-audio-player"
+    ) as HTMLElement | null;
+    const btn = document.getElementById(
+      "intro-audio-btn"
+    ) as HTMLButtonElement | null;
+    const btnPrev = document.getElementById(
+      "intro-audio-btn-prev"
+    ) as HTMLButtonElement | null;
+    const btnNext = document.getElementById(
+      "intro-audio-btn-next"
+    ) as HTMLButtonElement | null;
+    const modeBtn = document.getElementById(
+      "intro-audio-mode-btn"
+    ) as HTMLButtonElement | null;
+    const vol = document.getElementById(
+      "intro-audio-vol"
+    ) as HTMLInputElement | null;
+    const iconPlay = document.getElementById(
+      "intro-icon-play"
+    ) as SVGElement | null;
+    const iconPause = document.getElementById(
+      "intro-icon-pause"
+    ) as SVGElement | null;
+    const bar = document.getElementById(
+      "intro-progress-bar"
+    ) as HTMLElement | null;
+    const track = document.getElementById(
+      "intro-progress-track"
+    ) as HTMLElement | null;
+    const current = document.getElementById(
+      "intro-current"
+    ) as HTMLElement | null;
+    const totalLabel = document.getElementById(
+      "intro-total"
+    ) as HTMLElement | null;
+    const nowLabel = document.getElementById(
+      "intro-now-label"
+    ) as HTMLElement | null;
+    const artImg = document.getElementById(
+      "intro-audio-art-img"
+    ) as HTMLImageElement | null;
 
     if (!wrap || !btn) return;
     if (wrap.dataset.introAudioInitialized === "true") return;
@@ -609,10 +650,12 @@ const hasMusic = MUSIC_TRACKS.length > 0;
       }
       if (totalLabel) {
         const totalStr = total > 0 ? fmt(total) : "0:00";
-        if (totalLabel.textContent !== totalStr) totalLabel.textContent = totalStr;
+        if (totalLabel.textContent !== totalStr)
+          totalLabel.textContent = totalStr;
       }
       if (vol && document.activeElement !== vol) {
-        if (Number(vol.value) !== state.volume) vol.value = String(state.volume);
+        if (Number(vol.value) !== state.volume)
+          vol.value = String(state.volume);
       }
       if (artImg && state.artworkUrl) {
         if (artImg.getAttribute("data-artwork") !== state.artworkUrl) {

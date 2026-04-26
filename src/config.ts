@@ -20,7 +20,6 @@ export const SITE = {
   backgroundPreset: "blue" satisfies BackgroundPreset,
   postPerIndex: 6,
   postPerPage: 12,
-  scheduledPostMargin: 15 * 60 * 1000, // 15 minutes
   showArchives: true,
   showGalleries: true,
   showGalleriesInIndex: true, // Show galleries in the general paginated list (only if showGalleries is true)

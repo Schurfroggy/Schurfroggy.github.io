@@ -59,4 +59,6 @@ export const SITE = {
   introAudio: {
     enabled: true,
   },
+  /** CDN TLS certificate `notAfter` (Asia/Shanghai). Footer shows days until / since expiry. */
+  sslCertExpiresAt: "2026-07-25T07:59:59+08:00",
 } as const;

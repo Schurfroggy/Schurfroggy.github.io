@@ -56,6 +56,12 @@ export default defineConfig({
         context: "client",
         optional: true,
       }),
+      /** When set (and not `astro dev`), MP3 `src` uses this origin + same path as the built asset (CDN → GitHub Pages origin). */
+      PUBLIC_MUSIC_CDN_ORIGIN: envField.string({
+        access: "public",
+        context: "client",
+        optional: true,
+      }),
     },
   },
 

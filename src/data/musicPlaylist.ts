@@ -36,6 +36,35 @@ for (const [p, url] of Object.entries(imageModules)) {
 
 const id3ByMp3 = id3Covers as Record<string, string>;
 
+/** `astro dev` always uses Vite URLs from `src/assets/music`. */
+const normalizeMusicCdnOrigin = (raw: string | undefined): string | null => {
+  if (!raw || typeof raw !== "string") return null;
+  const t = raw.trim();
+  if (!t) return null;
+  const withScheme = /^https?:\/\//i.test(t) ? t : `https://${t}`;
+  return withScheme.replace(/\/+$/, "");
+};
+
+/**
+ * When `PUBLIC_MUSIC_CDN_ORIGIN` is set at build time, point audio at CDN while keeping the same path as on Pages (CDN origin → GitHub).
+ */
+const rewriteAudioSrcForCdn = (viteUrl: string): string => {
+  if (import.meta.env.DEV) return viteUrl;
+  const origin = normalizeMusicCdnOrigin(
+    import.meta.env.PUBLIC_MUSIC_CDN_ORIGIN
+  );
+  if (!origin) return viteUrl;
+  try {
+    const pathFromUrl = new URL(
+      viteUrl,
+      "https://placeholder.local"
+    ).pathname;
+    return `${origin}${pathFromUrl}`;
+  } catch {
+    return viteUrl;
+  }
+};
+
 function filenameToLabel(path: string): string {
   const base = path.split("/").pop() ?? "Track";
   return base.replace(/\.mp3$/i, "").replace(/_/g, " ");
@@ -51,7 +80,7 @@ export const MUSIC_TRACKS: MusicTrack[] = Object.entries(audioModules)
   .map(([path, src]) => {
     const stem = pathNoExt(path);
     return {
-      src,
+      src: rewriteAudioSrcForCdn(src),
       label: filenameToLabel(path),
       artwork: artByPathStem.get(stem) ?? id3ByMp3[path] ?? defaultArt,
     };

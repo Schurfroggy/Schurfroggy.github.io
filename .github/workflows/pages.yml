@@ -31,6 +31,8 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          PUBLIC_MUSIC_CDN_ORIGIN: https://schurfroggy.top
         run: npm run build
 
       - name: Setup Pages

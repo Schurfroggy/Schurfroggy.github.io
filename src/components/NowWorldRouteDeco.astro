@@ -1,0 +1,88 @@
+---
+import worldMarkup from "@/components/decos/world-route.html?raw";
+---
+
+<section
+  class="now-world-route-deco mb-8 w-full max-w-full"
+  aria-label="Decorative map animation"
+>
+  <div
+    class="now-world-route-deco__frame overflow-x-auto [-webkit-overflow-scrolling:touch] pb-1"
+  >
+    <div class="now-world-route-deco__markup" set:html={worldMarkup} />
+  </div>
+</section>
+
+<style is:global>
+  .now-world-route-deco .now-world-route__wrap {
+    width: 685px;
+    max-width: none;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .now-world-route-deco .now-world-route__plane {
+    width: 38px;
+    height: 34px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    will-change: transform;
+    /* Rotate around icon center so heading matches path tangent */
+    transform-origin: 19px 17px;
+  }
+</style>
+
+<script>
+  import { Group, Tween } from "@tweenjs/tween.js";
+
+  function initNowWorldRoute(): void {
+    const path = document.querySelector<SVGPathElement>("#now-world-route-path");
+    const plane = document.querySelector<HTMLElement>("#now-world-route-plane");
+    if (!path || !plane) return;
+
+    /** 38×34 飞机容器：对齐路径点用中心 + 略上移，避免机身在航线下侧 */
+    const PLANE_HALF_W = 19;
+    const PLANE_HALF_H = 17;
+    const PLANE_LIFT_PX = 1;
+
+    const pathLength = path.getTotalLength();
+    if (!Number.isFinite(pathLength) || pathLength <= 0) return;
+
+    const state = { length: 0 };
+    const group = new Group();
+
+    const tween = new Tween(state)
+      .to({ length: pathLength }, 12000)
+      .onUpdate(obj => {
+        const len = obj.length;
+        const point = path.getPointAtLength(len);
+        const pointPrevious = path.getPointAtLength(Math.max(0, len - 1));
+        const dy = point.y - pointPrevious.y;
+        const dx = point.x - pointPrevious.x;
+        const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+        const tx = point.x - PLANE_HALF_W;
+        const ty = point.y - PLANE_HALF_H - PLANE_LIFT_PX;
+        plane.style.transform = `translate(${tx}px, ${ty}px) rotate(${angle}deg)`;
+      })
+      .repeat(Infinity);
+
+    group.add(tween);
+    tween.start();
+
+    const loop = (time: number) => {
+      requestAnimationFrame(loop);
+      group.update(time);
+    };
+    requestAnimationFrame(loop);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initNowWorldRoute, {
+      once: true,
+    });
+  } else {
+    initNowWorldRoute();
+  }
+</script>

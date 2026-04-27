@@ -2,6 +2,7 @@
 import { getCollection, render } from "astro:content";
 import NowLayout from "@/layouts/NowLayout.astro";
 import NowLiveClock from "@/components/NowLiveClock.astro";
+import NowWorldRouteDeco from "@/components/NowWorldRouteDeco.astro";
 import MomentItem from "@/components/MomentItem.astro";
 const pageDescription =
   "Short, dated updates — a living stream separate from the About page and long-form posts.";
@@ -27,6 +28,7 @@ const momentItems = await Promise.all(
 
 <NowLayout title="Now" description={pageDescription}>
   <NowLiveClock slot="header-extra" />
+  <NowWorldRouteDeco />
   {
     momentItems.length === 0 ? (
       <p class="text-foreground/60 italic">

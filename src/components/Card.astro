@@ -4,12 +4,17 @@ import { slugifyStr } from "@/utils/slugify";
 import { getEntryPath } from "@/utils/contentEntry";
 import Datetime from "./Datetime.astro";
 import IconGallery from "@/assets/icons/IconGallery.svg";
-import { getReadingMinutesForBlogEntry } from "@/utils/readingTime";
+import IconNovella from "@/assets/icons/IconNovella.svg";
+import IconPost from "@/assets/icons/IconPost.svg";
+import {
+  getReadingMinutesForBlogEntry,
+  getReadingMinutesForNovellaEntry,
+} from "@/utils/readingTime";
 
 type Props = {
   variant?: "h2" | "h3";
   featured?: boolean;
-} & (CollectionEntry<"blog"> | CollectionEntry<"galleries">);
+} & (CollectionEntry<"blog"> | CollectionEntry<"galleries"> | CollectionEntry<"novella">);
 
 const {
   variant: Heading = "h2",
@@ -25,9 +30,13 @@ const modDatetime = "modDatetime" in data ? data.modDatetime : null;
 const timezone = "timezone" in data ? data.timezone : undefined;
 const href = getEntryPath({ collection, id, filePath });
 const isGallery = collection === "galleries";
+const isNovella = collection === "novella";
+const isBlog = collection === "blog";
 const readingMinutes =
   collection === "blog"
     ? getReadingMinutesForBlogEntry({ collection, filePath })
+    : collection === "novella"
+      ? getReadingMinutesForNovellaEntry({ collection, filePath })
     : null;
 const headingId = `${collection}-${slugifyStr(String(id))}-title`;
 const descriptionId = `${collection}-${slugifyStr(String(id))}-description`;
@@ -75,11 +84,35 @@ const viewTransitionName = slugifyStr(String(title).replaceAll(".", "-"));
         "focus-within:shadow-purple-500/20 hover:shadow-purple-500/20",
         "shadow-[0_0_20px_-5px_rgba(168,85,247,0.15)]",
       ],
+
+    // Novella variant styling
+    isNovella &&
+      !featured && [
+        "border-cyan-500/20 bg-cyan-500/5",
+        "focus-within:border-cyan-500/40 focus-within:bg-cyan-500/10 hover:border-cyan-500/40 hover:bg-cyan-500/10",
+        "focus-within:shadow-cyan-500/10 hover:shadow-cyan-500/10",
+      ],
+
+    // Featured novella styling
+    isNovella &&
+      featured && [
+        "border-cyan-500/40 bg-cyan-500/10",
+        "focus-within:border-cyan-500/60 focus-within:bg-cyan-500/15 hover:border-cyan-500/60 hover:bg-cyan-500/15",
+        "focus-within:shadow-cyan-500/20 hover:shadow-cyan-500/20",
+        "shadow-[0_0_20px_-5px_rgba(6,182,212,0.15)]",
+      ],
   ]}
 >
   <!-- Cursor-following glow -->
   <div
-    class="card-glow-effect pointer-events-none absolute inset-0 z-0 rounded-2xl opacity-0 transition-opacity duration-300 group-focus-within/card:opacity-100 group-hover/card:opacity-100 motion-reduce:transition-none"
+    class:list={[
+      "card-glow-effect pointer-events-none absolute inset-0 z-0 rounded-2xl transition-opacity duration-300 motion-reduce:transition-none",
+      !isGallery && "opacity-0 group-focus-within/card:opacity-100 group-hover/card:opacity-100",
+      isGallery && "opacity-100",
+      isBlog && "card-glow-effect-post",
+      isGallery && "card-glow-effect-gallery",
+      isNovella && "card-glow-effect-novella",
+    ]}
     aria-hidden="true"
   >
   </div>
@@ -91,6 +124,8 @@ const viewTransitionName = slugifyStr(String(title).replaceAll(".", "-"));
         "rounded-sm text-lg font-semibold text-foreground transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none",
         isGallery
           ? "group-hover/card:text-purple-400 focus-visible:ring-purple-500"
+          : isNovella
+            ? "group-hover/card:text-cyan-400 focus-visible:ring-cyan-500"
           : featured
             ? "group-hover/card:text-amber-500 focus-visible:ring-amber-500"
             : "group-hover/card:text-accent focus-visible:ring-accent",
@@ -101,6 +136,16 @@ const viewTransitionName = slugifyStr(String(title).replaceAll(".", "-"));
     >
       <Heading id={headingId} class="flex items-center gap-2">
         {
+          isBlog && (
+            <span
+              aria-hidden="true"
+              class="inline-flex items-center justify-center rounded-md bg-accent/10 p-1 text-accent/80 ring-1 ring-accent/20"
+            >
+              <IconPost class="size-4" />
+            </span>
+          )
+        }
+        {
           isGallery && (
             <span
               aria-hidden="true"
@@ -110,6 +155,18 @@ const viewTransitionName = slugifyStr(String(title).replaceAll(".", "-"));
             </span>
           )
         }
+        {
+          isNovella && (
+            <span
+              aria-hidden="true"
+              class="inline-flex items-center justify-center rounded-md bg-cyan-500/10 p-1 text-cyan-400/80 ring-1 ring-cyan-500/20"
+            >
+              <IconNovella class="size-4" />
+            </span>
+          )
+        }
+        {isBlog && <span class="sr-only">Post:</span>}
+        {isNovella && <span class="sr-only">Novella:</span>}
         {isGallery && <span class="sr-only">Gallery:</span>}
         {title}
       </Heading>
@@ -170,6 +227,36 @@ const viewTransitionName = slugifyStr(String(title).replaceAll(".", "-"));
       transparent 80%
     );
     will-change: opacity;
+  }
+
+  .card-glow-effect-post {
+    background: radial-gradient(
+      350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      color-mix(in oklab, var(--accent) 16%, transparent) 0%,
+      color-mix(in oklab, var(--accent) 9%, transparent) 35%,
+      color-mix(in oklab, var(--accent) 2%, transparent) 65%,
+      transparent 82%
+    );
+  }
+
+  .card-glow-effect-gallery {
+    background: radial-gradient(
+      350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      color-mix(in oklab, rgb(168 85 247) 18%, transparent) 0%,
+      color-mix(in oklab, rgb(168 85 247) 10%, transparent) 35%,
+      color-mix(in oklab, rgb(168 85 247) 2%, transparent) 65%,
+      transparent 82%
+    );
+  }
+
+  .card-glow-effect-novella {
+    background: radial-gradient(
+      350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      color-mix(in oklab, rgb(6 182 212) 18%, transparent) 0%,
+      color-mix(in oklab, rgb(6 182 212) 10%, transparent) 35%,
+      color-mix(in oklab, rgb(6 182 212) 2%, transparent) 65%,
+      transparent 82%
+    );
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -21,16 +21,26 @@ const normalizePathname = (pathname: string) => {
   return p;
 };
 
-/** `/posts/foo` article vs `/posts` or `/posts/2` list pagination */
-const isBlogPostDetailPathname = (pathname: string): boolean => {
+/**
+ * Detail article path vs collection index/pagination:
+ * - `/posts/foo` / `/novella/foo` -> true
+ * - `/posts` `/posts/2` `/novella` `/novella/2` -> false
+ */
+const isCollectionDetailPathname = (
+  pathname: string,
+  basePath: "/posts" | "/novella"
+): boolean => {
   const p = normalizePathname(pathname);
-  if (!p.startsWith("/posts")) return false;
-  const rest =
-    p === "/posts" ? "" : p.slice("/posts".length).replace(/^\//, "");
+  if (!p.startsWith(basePath)) return false;
+  const rest = p === basePath ? "" : p.slice(basePath.length).replace(/^\//, "");
   if (rest === "") return false;
   if (/^\d+$/.test(rest)) return false;
   return true;
 };
+
+const isReadableDetailPathname = (pathname: string): boolean =>
+  isCollectionDetailPathname(pathname, "/posts") ||
+  isCollectionDetailPathname(pathname, "/novella");
 
 type Stored = { ratio: number; y: number; v: 1 };
 
@@ -86,7 +96,7 @@ const scheduleSave = () => {
   saveRaf = requestAnimationFrame(() => {
     saveRaf = 0;
     const pathname = location.pathname;
-    if (!isBlogPostDetailPathname(pathname)) return;
+    if (!isReadableDetailPathname(pathname)) return;
     if (location.hash) return;
 
     const y = window.scrollY;
@@ -147,7 +157,7 @@ const showRestoredToast = () => {
 
 const restoreForPathname = (pathname: string): boolean => {
   if (location.hash) return false;
-  if (!isBlogPostDetailPathname(pathname)) return false;
+  if (!isReadableDetailPathname(pathname)) return false;
   const s = readStored(pathname);
   if (!s) return false;
 

@@ -37,9 +37,21 @@ import worldMarkup from "@/components/decos/world-route.html?raw";
 <script>
   import { Group, Tween } from "@tweenjs/tween.js";
 
+  declare global {
+    interface Window {
+      __nowWorldRouteCleanup?: () => void;
+    }
+  }
+
   function initNowWorldRoute(): void {
-    const path = document.querySelector<SVGPathElement>("#now-world-route-path");
-    const plane = document.querySelector<HTMLElement>("#now-world-route-plane");
+    const root = document.querySelector<HTMLElement>(".now-world-route-deco");
+    if (!root) return;
+
+    // Stop previous loop before creating a new one on view transitions.
+    window.__nowWorldRouteCleanup?.();
+
+    const path = root.querySelector<SVGPathElement>("#now-world-route-path");
+    const plane = root.querySelector<HTMLElement>("#now-world-route-plane");
     if (!path || !plane) return;
 
     /** 38×34 飞机容器：对齐路径点用中心 + 略上移，避免机身在航线下侧 */
@@ -71,18 +83,36 @@ import worldMarkup from "@/components/decos/world-route.html?raw";
     group.add(tween);
     tween.start();
 
+    let rafId = 0;
+    let disposed = false;
     const loop = (time: number) => {
-      requestAnimationFrame(loop);
+      if (disposed) return;
       group.update(time);
+      rafId = requestAnimationFrame(loop);
     };
-    requestAnimationFrame(loop);
+    rafId = requestAnimationFrame(loop);
+
+    const cleanup = () => {
+      if (disposed) return;
+      disposed = true;
+      tween.stop();
+      group.removeAll();
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+
+    window.__nowWorldRouteCleanup = cleanup;
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        if (window.__nowWorldRouteCleanup === cleanup) {
+          cleanup();
+          window.__nowWorldRouteCleanup = undefined;
+        }
+      },
+      { once: true }
+    );
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initNowWorldRoute, {
-      once: true,
-    });
-  } else {
-    initNowWorldRoute();
-  }
+  initNowWorldRoute();
+  document.addEventListener("astro:page-load", initNowWorldRoute);
 </script>

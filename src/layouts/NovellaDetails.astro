@@ -1,0 +1,134 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Datetime from "@/components/Datetime.astro";
+import BackToTopButton from "@/components/BackToTopButton.astro";
+import { SITE } from "@/config";
+import { slugifyStr } from "@/utils/slugify";
+import { getCollectionPath } from "@/utils/getPath";
+import { NOVELLA_PATH } from "@/content.config";
+import { getReadingMinutesForNovellaEntry } from "@/utils/readingTime";
+
+type Props = {
+  novella: CollectionEntry<"novella">;
+  novellas: CollectionEntry<"novella">[];
+};
+
+const { novella, novellas } = Astro.props;
+const { title, description, pubDatetime, modDatetime, timezone, tags } = novella.data;
+const { Content } = await render(novella);
+const readingMinutes = getReadingMinutesForNovellaEntry(novella);
+
+const layoutProps = {
+  title: `${title} | ${SITE.title}`,
+  description,
+  pubDatetime,
+  modDatetime,
+  scrollSmooth: true,
+};
+
+const all = novellas.map(({ id, filePath, data }) => ({
+  id,
+  filePath,
+  title: data.title,
+}));
+const currentIndex = all.findIndex(item => item.id === novella.id);
+const prevItem = currentIndex > 0 ? all[currentIndex - 1] : null;
+const nextItem = currentIndex < all.length - 1 ? all[currentIndex + 1] : null;
+
+const getNovellaHref = (id: string, filePath: string | undefined) =>
+  getCollectionPath(id, filePath, {
+    sourceBasePath: NOVELLA_PATH,
+    routeBasePath: "/novella",
+  });
+---
+
+<Layout {...layoutProps}>
+  <Header />
+  {SITE.showBackButton && <Breadcrumb withBackButton />}
+  <main
+    id="main-content"
+    class:list={["relative app-layout pb-12", { "mt-8": !SITE.showBackButton }]}
+    data-pagefind-body
+  >
+    <header class="mb-8 text-center">
+      <h1
+        transition:name={slugifyStr(title)}
+        class="text-3xl leading-tight font-bold tracking-tight sm:text-4xl"
+      >
+        {title}
+      </h1>
+      <p class="mx-auto mt-3 max-w-2xl text-foreground/75">{description}</p>
+      <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
+        <Datetime
+          {pubDatetime}
+          {modDatetime}
+          {timezone}
+          size="sm"
+          class="[&>svg]:hidden"
+        />
+        {
+          readingMinutes != null && (
+            <span class="inline-flex items-center gap-1 rounded-full border border-border/40 px-2 py-0.5 text-xs">
+              <svg
+                class="size-3.5 shrink-0 text-accent/70"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v6l4 2" />
+              </svg>
+              <span>{readingMinutes} min read</span>
+            </span>
+          )
+        }
+      </div>
+      <div class="mt-4 flex flex-wrap justify-center gap-2">
+        {tags.map(tag => <span class="rounded-full border border-border/40 px-2 py-0.5 text-xs">#{tag}</span>)}
+      </div>
+    </header>
+
+    <article class="app-prose mt-8 w-full max-w-app prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)">
+      <Content />
+    </article>
+
+    <div data-pagefind-ignore class="mt-10 grid grid-cols-2 gap-3">
+      {
+        prevItem ? (
+          <a
+            href={getNovellaHref(prevItem.id, prevItem.filePath)}
+            class="rounded-xl border border-border/30 px-4 py-3 text-sm transition-colors hover:border-accent/40 hover:text-accent"
+          >
+            ← {prevItem.title}
+          </a>
+        ) : (
+          <div />
+        )
+      }
+      {
+        nextItem && (
+          <a
+            href={getNovellaHref(nextItem.id, nextItem.filePath)}
+            class="rounded-xl border border-border/30 px-4 py-3 text-right text-sm transition-colors hover:border-accent/40 hover:text-accent"
+          >
+            {nextItem.title} →
+          </a>
+        )
+      }
+    </div>
+  </main>
+  <BackToTopButton />
+  <Footer />
+</Layout>
+
+<script>
+  import { initPostReadingPosition } from "@/utils/postReadingPosition";
+  initPostReadingPosition();
+</script>

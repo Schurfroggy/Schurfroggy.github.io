@@ -97,6 +97,13 @@ const isActive = (path: string) => {
             </li>
             <li>
               <a
+                href="/novella"
+                class:list={["nav-link", { "nav-active": isActive("/novella") }]}
+                >Novella</a
+              >
+            </li>
+            <li>
+              <a
                 href="/tags"
                 class:list={["nav-link", { "nav-active": isActive("/tags") }]}
                 >Tags</a

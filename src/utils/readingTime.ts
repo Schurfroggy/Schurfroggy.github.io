@@ -47,3 +47,15 @@ export const getReadingMinutesForBlogEntry = (
     return null;
   }
 };
+
+export const getReadingMinutesForNovellaEntry = (
+  entry: Pick<CollectionEntry<"novella">, "collection" | "filePath">
+): number | null => {
+  if (entry.collection !== "novella" || !entry.filePath) return null;
+  try {
+    const raw = readFileSync(entry.filePath, "utf-8");
+    return estimateReadingMinutesFromMarkdown(stripYamlFrontmatter(raw));
+  } catch {
+    return null;
+  }
+};

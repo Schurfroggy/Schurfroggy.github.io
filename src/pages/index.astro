@@ -13,13 +13,14 @@ import { SITE } from "@/config";
 import { SOCIALS } from "@/constants";
 import IntroAudio from "@/components/IntroAudio.astro";
 
-const [blogPosts, galleryPosts] = await Promise.all([
+const [blogPosts, galleryPosts, novellaPosts] = await Promise.all([
   getCollection("blog"),
   SITE.showGalleries && SITE.showGalleriesInIndex
     ? getCollection("galleries")
     : Promise.resolve([]),
+  getCollection("novella", ({ data }) => !data.draft),
 ]);
-const posts = [...blogPosts, ...galleryPosts];
+const posts = [...blogPosts, ...galleryPosts, ...novellaPosts];
 
 const sortedPosts = getSortedPosts(posts);
 const featuredPosts = sortedPosts.filter(({ data }) => "featured" in data && data.featured);
@@ -181,12 +182,30 @@ const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
           </ul>
 
           <!-- ═══════════════════ CTA ═══════════════════ -->
-          <div class="mt-8 mb-4 flex justify-center w-full">
+          <div class="mt-8 mb-4 flex w-full flex-wrap justify-center gap-3">
             <LinkButton
               href="/posts/"
-              class="group inline-flex items-center w-full sm:w-auto justify-center gap-2 rounded-xl border border-accent/20 bg-accent/10 px-8 py-4 text-base font-bold text-accent transition-all duration-300 hover:border-accent hover:bg-accent/20 hover:shadow-xl hover:shadow-accent/20 hover:-translate-y-0.5"
+              class="group inline-flex items-center w-full sm:w-auto justify-center gap-2 rounded-xl border border-accent/20 bg-accent/10 px-8 py-4 text-base font-bold text-accent transition-all duration-300 hover:border-accent hover:bg-accent/20 hover:shadow-xl hover:shadow-accent/20 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               Explore all posts
+              <IconArrowRight
+                class="inline-block transition-transform duration-300 group-hover:translate-x-1 rtl:-rotate-180"
+              />
+            </LinkButton>
+            <LinkButton
+              href="/novella/"
+              class="group inline-flex items-center w-full sm:w-auto justify-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-8 py-4 text-base font-bold text-cyan-400 transition-all duration-300 hover:border-cyan-500 hover:bg-cyan-500/20 hover:shadow-xl hover:shadow-cyan-500/20 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              Explore all novels
+              <IconArrowRight
+                class="inline-block transition-transform duration-300 group-hover:translate-x-1 rtl:-rotate-180"
+              />
+            </LinkButton>
+            <LinkButton
+              href="/galleries/"
+              class="group inline-flex items-center w-full sm:w-auto justify-center gap-2 rounded-xl border border-purple-500/20 bg-purple-500/10 px-8 py-4 text-base font-bold text-purple-400 transition-all duration-300 hover:border-purple-500 hover:bg-purple-500/20 hover:shadow-xl hover:shadow-purple-500/20 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              Open gallery
               <IconArrowRight
                 class="inline-block transition-transform duration-300 group-hover:translate-x-1 rtl:-rotate-180"
               />

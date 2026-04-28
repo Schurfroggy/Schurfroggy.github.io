@@ -14,13 +14,14 @@ if (!SITE.showArchives) {
   return Astro.redirect("/404");
 }
 
-const [blogPosts, galleryPosts] = await Promise.all([
+const [blogPosts, galleryPosts, novellaPosts] = await Promise.all([
   getCollection("blog", ({ data }) => !data.draft),
   SITE.showGalleries && SITE.showGalleriesInIndex
     ? getCollection("galleries", ({ data }) => !data.draft)
     : Promise.resolve([]),
+  getCollection("novella", ({ data }) => !data.draft),
 ]);
-const posts = [...blogPosts, ...galleryPosts];
+const posts = [...blogPosts, ...galleryPosts, ...novellaPosts];
 
 const months = [
   "Enero",

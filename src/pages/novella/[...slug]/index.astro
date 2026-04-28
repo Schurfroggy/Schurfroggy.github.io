@@ -1,0 +1,31 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import NovellaDetails from "@/layouts/NovellaDetails.astro";
+import getSortedPosts from "@/utils/getSortedPosts";
+import { getCollectionPath } from "@/utils/getPath";
+import { NOVELLA_PATH } from "@/content.config";
+
+type Props = {
+  novella: CollectionEntry<"novella">;
+};
+
+export async function getStaticPaths() {
+  const novellas = await getCollection("novella", ({ data }) => !data.draft);
+  return novellas.map(novella => ({
+    params: {
+      slug: getCollectionPath(novella.id, novella.filePath, {
+        sourceBasePath: NOVELLA_PATH,
+        routeBasePath: "/novella",
+        includeBase: false,
+      }),
+    },
+    props: { novella },
+  }));
+}
+
+const { novella } = Astro.props;
+const novellas = await getCollection("novella");
+const sortedNovellas = getSortedPosts(novellas) as CollectionEntry<"novella">[];
+---
+
+<NovellaDetails novella={novella} novellas={sortedNovellas} />

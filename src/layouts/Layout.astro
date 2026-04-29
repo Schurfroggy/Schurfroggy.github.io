@@ -4,7 +4,6 @@ import { ClientRouter } from "astro:transitions";
 import { PUBLIC_GOOGLE_SITE_VERIFICATION } from "astro:env/client";
 import { SITE } from "@/config";
 import BackgroundPresetPicker from "@/components/BackgroundPresetPicker.astro";
-import SearchModal from "@/components/SearchModal.astro";
 import "@/styles/global.css";
 
 type Props = {
@@ -17,6 +16,10 @@ type Props = {
   pubDatetime?: Date;
   modDatetime?: Date | null;
   scrollSmooth?: boolean;
+  /** When false, hides the right-side light background swatches (e.g. homepage). Default true. */
+  showBackgroundPresetPicker?: boolean;
+  /** Homepage-only: mount reference lowpoly SVG backdrop (light theme only; script self-guards). */
+  homeLowpolyBackdrop?: boolean;
 };
 
 const {
@@ -29,6 +32,8 @@ const {
   pubDatetime,
   modDatetime,
   scrollSmooth = false,
+  showBackgroundPresetPicker = true,
+  homeLowpolyBackdrop = false,
 } = Astro.props;
 
 const socialImageURL = new URL(ogImage, Astro.url);
@@ -62,6 +67,7 @@ const showTrail = SITE.backdropEffects.trail;
   lang={`${SITE.lang ?? "en"}`}
   class={`${scrollSmooth ? "scroll-smooth" : ""}`}
   data-bg-preset={SITE.backgroundPreset}
+  data-home-lowpoly={homeLowpolyBackdrop ? "true" : "false"}
 >
   <head>
     <meta charset="UTF-8" />
@@ -181,6 +187,25 @@ const showTrail = SITE.backdropEffects.trail;
         };
       })();
     </script>
+
+    <!-- View transitions keep `<html>` across navigations; sync flags from URL after SPA hops -->
+    <script is:inline>
+      (function () {
+        function syncHomeLowpolyFromPath() {
+          try {
+            var p = window.location.pathname || "/";
+            var isHome = p === "/" || p === "";
+            document.documentElement.setAttribute(
+              "data-home-lowpoly",
+              isHome ? "true" : "false"
+            );
+          } catch (_) {}
+        }
+        syncHomeLowpolyFromPath();
+        document.addEventListener("astro:page-load", syncHomeLowpolyFromPath);
+        document.addEventListener("astro:after-swap", syncHomeLowpolyFromPath);
+      })();
+    </script>
   </head>
   <body>
     <!-- Global decorative backdrop (grid, glow, cursor glow, noise) -->
@@ -189,19 +214,122 @@ const showTrail = SITE.backdropEffects.trail;
       {showCursorGlow && <div class="site-cursor-glow"></div>}
       {showGrain && <div class="site-grain"></div>}
     </div>
+    {
+      /* Outside transition:persist so /posts etc. do not keep the home mesh after client nav */
+      homeLowpolyBackdrop && (
+        <div class="home-lowpoly-layer" aria-hidden="true">
+          <svg
+            id="home-lowpoly-svg"
+            viewBox="0 0 1600 600"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            <defs>
+              <linearGradient
+                id="home-lp-grad-0"
+                x1="0"
+                y1="0"
+                x2="1"
+                y2="0"
+                color-interpolation="sRGB"
+              >
+                <stop
+                  id="home-lp-stop-0a"
+                  offset="0%"
+                  stop-color="#dbeafe"
+                />
+                <stop
+                  id="home-lp-stop-0b"
+                  offset="100%"
+                  stop-color="#ede9fe"
+                />
+              </linearGradient>
+              <linearGradient
+                id="home-lp-grad-1"
+                x1="0"
+                y1="0"
+                x2="1"
+                y2="0"
+                color-interpolation="sRGB"
+              >
+                <stop
+                  id="home-lp-stop-1a"
+                  offset="0%"
+                  stop-color="#d1fae5"
+                />
+                <stop
+                  id="home-lp-stop-1b"
+                  offset="100%"
+                  stop-color="#fce7f3"
+                />
+              </linearGradient>
+            </defs>
+            <rect
+              id="home-lp-rect-0"
+              x="0"
+              y="0"
+              width="1600"
+              height="600"
+              stroke="none"
+              fill="url(#home-lp-grad-0)"
+            />
+            <rect
+              id="home-lp-rect-1"
+              x="0"
+              y="0"
+              width="1600"
+              height="600"
+              stroke="none"
+              fill="url(#home-lp-grad-1)"
+            />
+          </svg>
+        </div>
+      )
+    }
 
     <slot />
 
-    <BackgroundPresetPicker />
-    <SearchModal />
+    {showBackgroundPresetPicker && <BackgroundPresetPicker />}
 
     <!-- Load full theme logic -->
     <script src="../scripts/theme.ts"></script>
+    {homeLowpolyBackdrop && <script is:inline src="/vendor/lowpoly-bg/TweenMax.min.js" />}
+    {homeLowpolyBackdrop && <script is:inline src="/vendor/lowpoly-bg/home-lowpoly.js" />}
     {showTrail && <script src="../scripts/trail.ts"></script>}
   </body>
 </html>
 
 <style>
+  .home-lowpoly-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.72;
+  }
+
+  .home-lowpoly-layer svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .home-lowpoly-layer svg g {
+    mix-blend-mode: lighten;
+  }
+
+  .home-lowpoly-layer svg polygon {
+    stroke: none;
+    fill: white;
+  }
+
+  html[data-theme="dark"] .home-lowpoly-layer {
+    display: none;
+  }
+
+  :global(html[data-theme="light"][data-home-lowpoly="true"] .site-grid) {
+    opacity: 0;
+  }
+
   .site-backdrop {
     position: fixed;
     inset: 0;

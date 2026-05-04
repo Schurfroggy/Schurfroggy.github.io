@@ -228,7 +228,7 @@ var tesselation = (function() {
       var g = createRandomTesselation();
       n = g.children.length;
       for (i = n; i--; ) {
-        TweenMax.fromTo(g.children[i], t*0.4, {opacity: 0}, {opacity: 0.12 + 0.1 * Math.random(), delay: t*(0.3*i/n + 0.3), ease: Back.easeOut});
+        TweenMax.fromTo(g.children[i], t*0.4, {opacity: 0}, {opacity: 0.16 + 0.14 * Math.random(), delay: t*(0.3*i/n + 0.3), ease: Back.easeOut});
       }
       svg.appendChild(g);
       prevGroup = g;
@@ -243,28 +243,30 @@ var tesselation = (function() {
 var gradients = (function() {
   var grad1, grad2, showingGrad1;
 
-  /** 色相分明的浅色 stop（左→右渐变两端各抽一色，跨度拉大才不显单调） */
+  /** 色相分明的 stop（左→右渐变两端各抽一色；比之前更鲜艳，仍适合浅色页背景） */
   var colors = [
-    '#dbeafe',
-    '#e0f2fe',
-    '#cffafe',
-    '#dbeafe',
-    '#e0e7ff',
-    '#ede9fe',
-    '#f3e8ff',
-    '#faf5ff',
-    '#eef2ff',
-    '#d1fae5',
-    '#ccfbf1',
-    '#dcfce7',
-    '#ecfccb',
-    '#fef9c3',
-    '#fef3c7',
-    '#ffedd5',
-    '#fce7f3',
-    '#fae8ff',
-    '#ffe4e6',
-    '#e0f2fe'
+    '#93c5fd',
+    '#7dd3fc',
+    '#67e8f9',
+    '#5eead4',
+    '#6ee7b7',
+    '#86efac',
+    '#bef264',
+    '#fde047',
+    '#fcd34d',
+    '#fdba74',
+    '#fb923c',
+    '#fda4af',
+    '#f9a8d4',
+    '#f0abfc',
+    '#d8b4fe',
+    '#c4b5fd',
+    '#a5b4fc',
+    '#93c5fd',
+    '#38bdf8',
+    '#22d3ee',
+    '#a78bfa',
+    '#fb7185'
   ];
 
   function assignRandomColors(gradObj) {
@@ -308,7 +310,7 @@ var gradients = (function() {
 
       TweenMax.to(hide.rect, 0.55*t, {opacity: 0, delay: 0.2*t, ease: Sine.easeOut});
       assignRandomColors(show);
-      TweenMax.to(show.rect, 0.65*t, {opacity: 0.76, ease: Sine.easeIn});
+      TweenMax.to(show.rect, 0.65*t, {opacity: 0.82, ease: Sine.easeIn});
     }
   };
 })();

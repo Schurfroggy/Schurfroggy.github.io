@@ -310,3 +310,61 @@ html[data-theme="light"][data-home-lowpoly="true"] .footer-wrapper {
   background: color-mix(in srgb, var(--accent) 15%, transparent);
   box-shadow: 0 4px 15px color-mix(in srgb, var(--accent) 15%, transparent);
 }
+
+/* ── Homepage Recent: first card visible, rest expand on scroll (see index.astro script) ── */
+#recent-posts .recent-post-item--pending {
+  max-height: 0;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  border-width: 0 !important;
+  opacity: 0;
+  transform: translateY(0.75rem);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* No JS / scripting disabled: show full list */
+@media (scripting: none) {
+  #recent-posts .recent-post-item--pending {
+    max-height: none !important;
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+    padding: 1rem !important;
+    border-width: 2px !important;
+    opacity: 1 !important;
+    transform: none !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+  }
+
+  @media (min-width: 640px) {
+    #recent-posts .recent-post-item--pending {
+      padding: 1.25rem !important;
+    }
+  }
+}
+
+/* Reduced motion: never collapse (avoid flash before JS runs) */
+@media (prefers-reduced-motion: reduce) {
+  #recent-posts .recent-post-item--pending {
+    max-height: none !important;
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+    padding: 1rem !important;
+    border-width: 2px !important;
+    opacity: 1 !important;
+    transform: none !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+  }
+
+  @media (min-width: 640px) {
+    #recent-posts .recent-post-item--pending {
+      padding: 1.25rem !important;
+    }
+  }
+}

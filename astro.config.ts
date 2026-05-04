@@ -42,6 +42,8 @@ export default defineConfig({
     // Hoisted `vite` vs Astro’s nested Vite: duplicate `Plugin` types fail `astro check`.
     plugins: [tailwindcss() as never],
     optimizeDeps: {
+      /** Helps dev server resolve Mermaid’s lazy diagram chunks (class/state/git/etc.). */
+      include: ["mermaid"],
       exclude: ["@resvg/resvg-js"],
     },
   },

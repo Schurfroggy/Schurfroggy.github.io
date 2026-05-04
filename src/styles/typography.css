@@ -260,4 +260,18 @@
       @apply rounded-sm border border-border px-0.5 py-px;
     }
   }
+
+  /* Client-rendered Mermaid: fill prose width; Shiki block was ~full width, SVG default is not */
+  .mermaid-diagram-wrapper {
+    @apply w-full min-w-0;
+  }
+
+  .mermaid-diagram-wrapper .mermaid {
+    @apply w-full min-w-0;
+  }
+
+  .mermaid-diagram-wrapper svg {
+    @apply w-full max-w-full;
+    height: auto;
+  }
 }

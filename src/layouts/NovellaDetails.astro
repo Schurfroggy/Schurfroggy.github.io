@@ -130,5 +130,18 @@ const getNovellaHref = (id: string, filePath: string | undefined) =>
 
 <script>
   import { initPostReadingPosition } from "@/utils/postReadingPosition";
+  import {
+    ensureMermaidThemeListener,
+    initMermaidInProse,
+  } from "@/utils/mermaidClient";
+
   initPostReadingPosition();
+  ensureMermaidThemeListener();
+
+  async function runMermaid() {
+    await initMermaidInProse();
+  }
+
+  document.addEventListener("astro:page-load", () => void runMermaid());
+  void runMermaid();
 </script>

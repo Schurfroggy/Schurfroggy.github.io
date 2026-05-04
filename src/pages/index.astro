@@ -43,7 +43,7 @@ const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
       <div class="relative z-10">
         <!-- Terminal prompt badge -->
         <div
-          class="mb-3 inline-flex items-center gap-2 rounded-full border border-border/40 bg-muted/20 px-3.5 py-1.5 font-cartograph text-xs sm:text-sm"
+          class="mb-3 inline-flex items-center gap-2 rounded-full border-2 border-accent/55 bg-muted/20 px-3.5 py-1.5 font-cartograph text-xs sm:text-sm dark:border-accent/60"
         >
           <span class="relative flex h-2 w-2">
             <span
@@ -163,7 +163,7 @@ const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
     <!-- ═══════════════════ RECENT POSTS ═══════════════════ -->
     {
       recentPosts.length > 0 && (
-        <section id="recent-posts" class="pt-6 pb-6">
+        <section id="recent-posts" class="recent-posts-section pt-6 pb-6">
           <div class="mb-6 flex items-center gap-3">
             <h2 class="text-sm font-bold tracking-widest uppercase">
               Recent
@@ -174,10 +174,20 @@ const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
               {recentPosts.length}]
             </span>
           </div>
-          <ul>
+          <ul class="recent-posts-list">
             {recentPosts.map(
               (data, index) =>
-                index < SITE.postPerIndex && <Card variant="h3" {...data} />
+                index < SITE.postPerIndex && (
+                  <Card
+                    variant="h3"
+                    class={
+                      index === 0
+                        ? "recent-post-item"
+                        : "recent-post-item recent-post-item--pending"
+                    }
+                    {...data}
+                  />
+                )
             )}
           </ul>
 
@@ -185,7 +195,7 @@ const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
           <div class="mt-8 mb-4 flex w-full flex-wrap justify-center gap-3">
             <LinkButton
               href="/posts/"
-              class="group inline-flex items-center w-full sm:w-auto justify-center gap-2 rounded-xl border border-accent/20 bg-accent/10 px-8 py-4 text-base font-bold text-accent transition-all duration-300 hover:border-accent hover:bg-accent/20 hover:shadow-xl hover:shadow-accent/20 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              class="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border-2 border-accent/55 bg-white/40 px-8 py-4 text-base font-bold text-black shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-accent hover:bg-accent/14 hover:!text-accent hover:shadow-xl hover:shadow-accent/20 focus-visible:!text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:border-accent/65 dark:bg-white/[0.06] dark:text-zinc-100 dark:hover:border-accent dark:hover:bg-accent/18 dark:hover:!text-accent dark:focus-visible:!text-accent"
             >
               Explore all posts
               <IconArrowRight
@@ -194,7 +204,7 @@ const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
             </LinkButton>
             <LinkButton
               href="/novella/"
-              class="group inline-flex items-center w-full sm:w-auto justify-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-8 py-4 text-base font-bold text-cyan-400 transition-all duration-300 hover:border-cyan-500 hover:bg-cyan-500/20 hover:shadow-xl hover:shadow-cyan-500/20 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              class="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border-2 border-cyan-500/60 bg-cyan-500/18 px-8 py-4 text-base font-bold text-black shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-cyan-500 hover:bg-cyan-500/26 hover:!text-cyan-400 hover:shadow-xl hover:shadow-cyan-500/20 focus-visible:!text-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:border-cyan-500/70 dark:bg-cyan-500/15 dark:text-zinc-100 dark:hover:border-cyan-500 dark:hover:bg-cyan-500/24 dark:hover:!text-cyan-400 dark:focus-visible:!text-cyan-400"
             >
               Explore all novels
               <IconArrowRight
@@ -203,7 +213,7 @@ const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
             </LinkButton>
             <LinkButton
               href="/galleries/"
-              class="group inline-flex items-center w-full sm:w-auto justify-center gap-2 rounded-xl border border-purple-500/20 bg-purple-500/10 px-8 py-4 text-base font-bold text-purple-400 transition-all duration-300 hover:border-purple-500 hover:bg-purple-500/20 hover:shadow-xl hover:shadow-purple-500/20 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              class="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border-2 border-purple-500/60 bg-purple-500/18 px-8 py-4 text-base font-bold text-black shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-purple-500 hover:bg-purple-500/26 hover:!text-purple-400 hover:shadow-xl hover:shadow-purple-500/20 focus-visible:!text-purple-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:border-purple-500/70 dark:bg-purple-500/15 dark:text-zinc-100 dark:hover:border-purple-500 dark:hover:bg-purple-500/24 dark:hover:!text-purple-400 dark:focus-visible:!text-purple-400"
             >
               Open gallery
               <IconArrowRight
@@ -291,6 +301,124 @@ const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
     );
   }
 
+  /** Homepage Recent: stagger reveal when section enters view (see global.css). */
+  function initRecentPostsReveal() {
+    const section = document.getElementById("recent-posts");
+    if (!section) return;
+
+    const pending = Array.from(
+      section.querySelectorAll<HTMLElement>(".recent-post-item--pending")
+    );
+    if (pending.length === 0) return;
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    const stripPending = (el: HTMLElement) => {
+      el.classList.remove("recent-post-item--pending");
+      el.removeAttribute("inert");
+      el.removeAttribute("aria-hidden");
+    };
+
+    if (reduceMotion) {
+      pending.forEach(stripPending);
+      return;
+    }
+
+    pending.forEach(el => {
+      el.setAttribute("inert", "");
+      el.setAttribute("aria-hidden", "true");
+    });
+
+    /* Per-card motion + stagger (keep in sync with user-tuned “slow” feel) */
+    const staggerMs = 440;
+    const revealDurationMs = 1800;
+
+    function revealOne(el: HTMLElement) {
+      el.removeAttribute("inert");
+      el.removeAttribute("aria-hidden");
+
+      el.classList.remove("recent-post-item--pending");
+      const h = el.scrollHeight;
+
+      if (typeof el.animate !== "function") {
+        return;
+      }
+
+      const slideY = 22;
+
+      el.style.overflow = "hidden";
+      el.style.maxHeight = "0px";
+      el.style.opacity = "0";
+      el.style.transform = `translateY(${slideY}px)`;
+      void el.offsetHeight;
+
+      const anim = el.animate(
+        [
+          {
+            maxHeight: "0px",
+            opacity: 0,
+            transform: `translateY(${slideY}px)`,
+          },
+          {
+            maxHeight: `${h}px`,
+            opacity: 1,
+            transform: "translateY(0)",
+          },
+        ],
+        {
+          duration: revealDurationMs,
+          /* Slight hold at the end: ease-out with soft landing */
+          easing: "cubic-bezier(0.2, 0.75, 0.25, 1)",
+          fill: "forwards",
+        }
+      );
+
+      anim.finished
+        .then(() => {
+          el.style.maxHeight = "";
+          el.style.opacity = "";
+          el.style.transform = "";
+          el.style.overflow = "";
+          anim.cancel();
+        })
+        .catch(() => {
+          el.style.maxHeight = "";
+          el.style.opacity = "";
+          el.style.transform = "";
+          el.style.overflow = "";
+        });
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+
+        let delay = 0;
+        pending.forEach((el) => {
+          window.setTimeout(() => revealOne(el), delay);
+          delay += staggerMs;
+        });
+      },
+      {
+        root: null,
+        /* Require more of the section in view before starting (later trigger while scrolling) */
+        rootMargin: "0px 0px -14% 0px",
+        threshold: 0,
+      }
+    );
+
+    io.observe(section);
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => io.disconnect(),
+      { once: true }
+    );
+  }
+
   document.addEventListener("astro:page-load", () => {
     const indexLayout = (document.querySelector("#main-content") as HTMLElement)
       ?.dataset?.layout;
@@ -299,6 +427,7 @@ const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
     }
 
     initHeroRotatingTagline();
+    initRecentPostsReveal();
 
     // ── Card glow follow cursor ──
     document.querySelectorAll<HTMLElement>(".card-glow").forEach(card => {

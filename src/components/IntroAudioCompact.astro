@@ -131,7 +131,7 @@ const hasMusic = MUSIC_TRACKS.length > 0;
     gap: 0;
     min-height: 2.9rem;
     border-radius: 0.6rem;
-    border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    border: 2px solid color-mix(in srgb, var(--border) 70%, var(--accent) 30%);
     background: color-mix(in srgb, var(--background) 88%, transparent);
     padding: 0.28rem 0.45rem 0.28rem 0.3rem;
     font-family: var(--font-cartograph, monospace);
@@ -142,10 +142,11 @@ const hasMusic = MUSIC_TRACKS.length > 0;
     transition:
       opacity 0.22s ease,
       transform 0.22s ease,
-      border-color 0.22s ease;
+      border-color 0.3s ease,
+      background 0.3s ease,
+      box-shadow 0.3s ease;
     backdrop-filter: blur(10px);
-    box-shadow: 0 8px 22px -16px
-      color-mix(in srgb, var(--accent) 50%, transparent);
+    box-shadow: 0 6px 18px -14px color-mix(in srgb, var(--foreground) 18%, transparent);
   }
 
   .intro-audio-compact.is-visible {
@@ -155,7 +156,16 @@ const hasMusic = MUSIC_TRACKS.length > 0;
   }
 
   .intro-audio-compact.is-playing {
-    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    border-color: var(--accent);
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent) 12%, var(--background)) 0%,
+      color-mix(in srgb, var(--background) 92%, transparent) 100%
+    );
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent),
+      0 8px 28px -12px color-mix(in srgb, var(--accent) 45%, transparent),
+      0 0 20px -8px color-mix(in srgb, var(--accent) 35%, transparent);
   }
 
   .intro-audio-compact-art-col {
@@ -173,17 +183,23 @@ const hasMusic = MUSIC_TRACKS.length > 0;
     aspect-ratio: 1;
     border-radius: 50%;
     overflow: hidden;
-    border: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border) 55%, var(--accent) 45%);
     box-shadow: 0 1px 6px color-mix(in srgb, #000 12%, transparent);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .intro-audio-compact.is-playing .intro-audio-compact-art-disc {
+    border-color: var(--accent);
+    box-shadow:
+      0 1px 6px color-mix(in srgb, #000 12%, transparent),
+      0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+    animation: intro-compact-art-spin 22s linear infinite;
   }
   .intro-audio-compact-art-img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-  .intro-audio-compact.is-playing .intro-audio-compact-art-disc {
-    animation: intro-compact-art-spin 22s linear infinite;
   }
   @media (prefers-reduced-motion: reduce) {
     .intro-audio-compact.is-playing .intro-audio-compact-art-disc {

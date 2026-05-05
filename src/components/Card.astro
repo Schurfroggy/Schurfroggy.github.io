@@ -14,7 +14,6 @@ import {
 type Props = {
   variant?: "h2" | "h3";
   featured?: boolean;
-  /** Merged onto the root `<li>` (e.g. homepage Recent stagger). */
   class?: string;
 } & (CollectionEntry<"blog"> | CollectionEntry<"galleries"> | CollectionEntry<"novella">);
 

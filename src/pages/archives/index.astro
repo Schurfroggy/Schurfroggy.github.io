@@ -5,6 +5,8 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import IconGallery from "@/assets/icons/IconGallery.svg";
+import IconNovella from "@/assets/icons/IconNovella.svg";
+import IconPost from "@/assets/icons/IconPost.svg";
 import { getEntryPath } from "@/utils/contentEntry";
 import { slugifyStr } from "@/utils/slugify";
 import getPostsByGroupCondition from "@/utils/getPostsByGroupCondition";
@@ -24,18 +26,18 @@ const [blogPosts, galleryPosts, novellaPosts] = await Promise.all([
 const posts = [...blogPosts, ...galleryPosts, ...novellaPosts];
 
 const months = [
-  "Enero",
-  "Febrero",
-  "Marzo",
-  "Abril",
-  "Mayo",
-  "Junio",
-  "Julio",
-  "Agosto",
-  "Septiembre",
-  "Octubre",
-  "Noviembre",
-  "Diciembre",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 const totalPosts = posts.length;
@@ -66,7 +68,7 @@ const yearGroups = Object.entries(
           <span class="hero-badge">{totalPosts} posts</span>
           <span class="hero-badge"
             >{yearGroups.length}
-            {yearGroups.length === 1 ? "año" : "años"}</span
+            {yearGroups.length === 1 ? "year" : "years"}</span
           >
         </div>
       </div>
@@ -131,13 +133,41 @@ const yearGroups = Object.entries(
                                     ),
                                   }}
                                 >
+                                  {post.collection === "blog" && (
+                                    <span
+                                      aria-hidden="true"
+                                      title="Post"
+                                      class="inline-flex shrink-0 items-center justify-center rounded-md bg-accent/10 p-1 text-accent/80 ring-1 ring-accent/20"
+                                    >
+                                      <IconPost class="size-3.5" />
+                                    </span>
+                                  )}
                                   {post.collection === "galleries" && (
                                     <span
+                                      aria-hidden="true"
                                       title="Gallery"
-                                      class="inline-flex items-center justify-center rounded-md p-0.5 text-accent/80 opacity-70"
+                                      class="inline-flex shrink-0 items-center justify-center rounded-md bg-purple-500/10 p-1 text-purple-400/80 ring-1 ring-purple-500/20"
                                     >
                                       <IconGallery class="size-3.5" />
                                     </span>
+                                  )}
+                                  {post.collection === "novella" && (
+                                    <span
+                                      aria-hidden="true"
+                                      title="Novella"
+                                      class="inline-flex shrink-0 items-center justify-center rounded-md bg-cyan-500/10 p-1 text-cyan-400/80 ring-1 ring-cyan-500/20"
+                                    >
+                                      <IconNovella class="size-3.5" />
+                                    </span>
+                                  )}
+                                  {post.collection === "blog" && (
+                                    <span class="sr-only">Post:</span>
+                                  )}
+                                  {post.collection === "galleries" && (
+                                    <span class="sr-only">Gallery:</span>
+                                  )}
+                                  {post.collection === "novella" && (
+                                    <span class="sr-only">Novella:</span>
                                   )}
                                   {post.data.title}
                                 </span>
@@ -529,7 +559,7 @@ const yearGroups = Object.entries(
       var(--color-foreground) 2%,
       var(--color-background)
     );
-    border: 1px solid
+    border: 2px solid
       color-mix(in srgb, var(--color-foreground) 6%, transparent);
     overflow: hidden;
     text-decoration: none;
@@ -546,7 +576,7 @@ const yearGroups = Object.entries(
     border-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
     box-shadow:
       0 8px 30px -8px color-mix(in srgb, var(--color-accent) 12%, transparent),
-      0 0 0 1px color-mix(in srgb, var(--color-accent) 6%, transparent),
+      0 0 0 2px color-mix(in srgb, var(--color-accent) 6%, transparent),
       inset 0 1px 0 color-mix(in srgb, var(--color-accent) 5%, transparent);
   }
 

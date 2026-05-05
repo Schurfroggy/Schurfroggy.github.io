@@ -174,19 +174,11 @@ const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
               {recentPosts.length}]
             </span>
           </div>
-          <ul class="recent-posts-list">
+          <ul>
             {recentPosts.map(
               (data, index) =>
                 index < SITE.postPerIndex && (
-                  <Card
-                    variant="h3"
-                    class={
-                      index === 0
-                        ? "recent-post-item"
-                        : "recent-post-item recent-post-item--pending"
-                    }
-                    {...data}
-                  />
+                  <Card variant="h3" {...data} />
                 )
             )}
           </ul>
@@ -301,124 +293,6 @@ const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
     );
   }
 
-  /** Homepage Recent: stagger reveal when section enters view (see global.css). */
-  function initRecentPostsReveal() {
-    const section = document.getElementById("recent-posts");
-    if (!section) return;
-
-    const pending = Array.from(
-      section.querySelectorAll<HTMLElement>(".recent-post-item--pending")
-    );
-    if (pending.length === 0) return;
-
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    const stripPending = (el: HTMLElement) => {
-      el.classList.remove("recent-post-item--pending");
-      el.removeAttribute("inert");
-      el.removeAttribute("aria-hidden");
-    };
-
-    if (reduceMotion) {
-      pending.forEach(stripPending);
-      return;
-    }
-
-    pending.forEach(el => {
-      el.setAttribute("inert", "");
-      el.setAttribute("aria-hidden", "true");
-    });
-
-    /* Per-card motion + stagger (keep in sync with user-tuned “slow” feel) */
-    const staggerMs = 440;
-    const revealDurationMs = 1800;
-
-    function revealOne(el: HTMLElement) {
-      el.removeAttribute("inert");
-      el.removeAttribute("aria-hidden");
-
-      el.classList.remove("recent-post-item--pending");
-      const h = el.scrollHeight;
-
-      if (typeof el.animate !== "function") {
-        return;
-      }
-
-      const slideY = 22;
-
-      el.style.overflow = "hidden";
-      el.style.maxHeight = "0px";
-      el.style.opacity = "0";
-      el.style.transform = `translateY(${slideY}px)`;
-      void el.offsetHeight;
-
-      const anim = el.animate(
-        [
-          {
-            maxHeight: "0px",
-            opacity: 0,
-            transform: `translateY(${slideY}px)`,
-          },
-          {
-            maxHeight: `${h}px`,
-            opacity: 1,
-            transform: "translateY(0)",
-          },
-        ],
-        {
-          duration: revealDurationMs,
-          /* Slight hold at the end: ease-out with soft landing */
-          easing: "cubic-bezier(0.2, 0.75, 0.25, 1)",
-          fill: "forwards",
-        }
-      );
-
-      anim.finished
-        .then(() => {
-          el.style.maxHeight = "";
-          el.style.opacity = "";
-          el.style.transform = "";
-          el.style.overflow = "";
-          anim.cancel();
-        })
-        .catch(() => {
-          el.style.maxHeight = "";
-          el.style.opacity = "";
-          el.style.transform = "";
-          el.style.overflow = "";
-        });
-    }
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        io.disconnect();
-
-        let delay = 0;
-        pending.forEach((el) => {
-          window.setTimeout(() => revealOne(el), delay);
-          delay += staggerMs;
-        });
-      },
-      {
-        root: null,
-        /* Require more of the section in view before starting (later trigger while scrolling) */
-        rootMargin: "0px 0px -14% 0px",
-        threshold: 0,
-      }
-    );
-
-    io.observe(section);
-
-    document.addEventListener(
-      "astro:before-swap",
-      () => io.disconnect(),
-      { once: true }
-    );
-  }
-
   document.addEventListener("astro:page-load", () => {
     const indexLayout = (document.querySelector("#main-content") as HTMLElement)
       ?.dataset?.layout;
@@ -427,7 +301,6 @@ const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
     }
 
     initHeroRotatingTagline();
-    initRecentPostsReveal();
 
     // ── Card glow follow cursor ──
     document.querySelectorAll<HTMLElement>(".card-glow").forEach(card => {

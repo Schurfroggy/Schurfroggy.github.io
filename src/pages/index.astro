@@ -12,6 +12,7 @@ import heroGif from "@/assets/gifs/xiantiaoxiaogou.gif";
 import { SITE } from "@/config";
 import { SOCIALS } from "@/constants";
 import IntroAudio from "@/components/IntroAudio.astro";
+import HeroWindmill from "@/components/HeroWindmill.astro";
 
 const [blogPosts, galleryPosts, novellaPosts] = await Promise.all([
   getCollection("blog"),
@@ -88,10 +89,11 @@ const heroTaglineIntervalMs = SITE.heroTaglineIntervalMs;
               alt=""
               width={heroGif.width}
               height={heroGif.height}
-              class="hero-gif max-h-44 w-auto max-w-[min(100%,18rem)] object-contain select-none sm:max-h-52 sm:max-w-[min(100%,20rem)] lg:max-h-64 lg:max-w-[min(100%,24rem)] xl:max-h-72"
+              class="hero-gif dark:hidden max-h-44 w-auto max-w-[min(100%,18rem)] object-contain select-none sm:max-h-52 sm:max-w-[min(100%,20rem)] lg:max-h-64 lg:max-w-[min(100%,24rem)] xl:max-h-72"
               loading="eager"
               decoding="async"
             />
+            <HeroWindmill class="hidden dark:flex select-none" />
           </div>
         </div>
 

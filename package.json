@@ -2,6 +2,10 @@
   "name": "devosfera",
   "type": "module",
   "version": "1.0.0",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
     "extract-music-covers": "node scripts/extract-music-covers.mjs",
     "predev": "node scripts/extract-music-covers.mjs",

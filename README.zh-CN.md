@@ -33,7 +33,7 @@
 /
 ├── public/
 │   ├── audio/                  # 如片头音效等
-│   ├── pagefind/               # 搜索索引（执行 `npm run build` 后复制到此处）
+│   ├── pagefind/               # 搜索索引（执行 `pnpm run build` 后复制到此处）
 │   └── music-covers-extracted/ # 从 MP3 抽出的封面（预构建脚本会更新）
 ├── scripts/                    # 如 extract-music-covers
 ├── src/
@@ -56,15 +56,15 @@
 
 ## 安装与本地开发
 
-**环境：** Node.js 20+；可用 **npm** 或 **pnpm**（仓库中可能同时存在不同锁文件，按你的习惯二选一即可）。
+**环境：** Node.js 20.19+（GitHub Actions 与 Docker 使用 **22**）。推荐使用 **pnpm**：锁文件为 [`pnpm-lock.yaml`](pnpm-lock.yaml)，[`package.json`](package.json) 中的 `packageManager` 供 Corepack 使用。本地也可用 **npm**，但 CI 不会执行 `npm ci`；若曾提交过 `package-lock.json`，建议从 git 中移除以免与 pnpm 锁文件分叉。
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 # → http://localhost:4321
 ```
 
-**本地试搜索：** Pagefind 在开发模式下不会凭空存在；需先 `npm run build` 把索引写入 `public/pagefind/`，再 `npm run preview` 或 `dev` 时即可用 ⌘K 搜索。
+**本地试搜索：** Pagefind 在开发模式下不会凭空存在；需先 `pnpm run build` 把索引写入 `public/pagefind/`，再 `pnpm run preview` 或 `dev` 时即可用 ⌘K 搜索。
 
 ### Docker
 
@@ -79,15 +79,15 @@ docker run -p 4321:80 devosfera-blog
 
 | 命令 | 作用 |
 | :--- | :--- |
-| `npm install` | 安装依赖 |
-| `npm run dev` | 本地开发，默认 `http://localhost:4321` |
-| `npm run build` | 预执行 `extract-music-covers`（prebuild）→ `astro check`、构建、Pagefind，最后把索引拷到 `public/pagefind/` |
-| `npm run preview` | 本地预览生产构建结果 |
-| `npm run format` | Prettier 写入格式化 |
-| `npm run format:check` | 只检查不写入 |
-| `npm run lint` | ESLint |
+| `pnpm install` | 安装依赖 |
+| `pnpm run dev` | 本地开发，默认 `http://localhost:4321` |
+| `pnpm run build` | 预执行 `extract-music-covers`（prebuild）→ `astro check`、构建、Pagefind，最后把索引拷到 `public/pagefind/` |
+| `pnpm run preview` | 本地预览生产构建结果 |
+| `pnpm run format` | Prettier 写入格式化 |
+| `pnpm run format:check` | 只检查不写入 |
+| `pnpm run lint` | ESLint |
 
-若用 pnpm，将 `npm` 换为 `pnpm` 即可。`predev` / `prebuild` 会在开发或构建前跑音乐封面脚本，与 `public/music-covers-extracted/` 中的封面保持同步。
+`predev` / `prebuild` 会在开发或构建前跑音乐封面脚本，与 `public/music-covers-extracted/` 中的封面保持同步。
 
 ---
 

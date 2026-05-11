@@ -33,7 +33,7 @@ More visual and design notes live in [CUSTOMIZATIONS.md](CUSTOMIZATIONS.md). Gal
 /
 ├── public/
 │   ├── audio/                  # e.g. intro SFX
-│   ├── pagefind/               # search index (copied here after `npm run build`)
+│   ├── pagefind/               # search index (copied here after `pnpm run build`)
 │   └── music-covers-extracted/ # ID3 art for the player (regenerated in prebuild)
 ├── scripts/                    # e.g. extract-music-covers
 ├── src/
@@ -56,15 +56,15 @@ More visual and design notes live in [CUSTOMIZATIONS.md](CUSTOMIZATIONS.md). Gal
 
 ## Local development
 
-**Requirements:** Node.js 20+ and a package manager (`npm` or `pnpm` both work; the repo may contain more than one lockfile).
+**Requirements:** Node.js 20.19+ (GitHub Actions and Docker use **22**). **pnpm** is the supported workflow: lockfile [`pnpm-lock.yaml`](pnpm-lock.yaml), and [`package.json`](package.json) sets `packageManager` for Corepack. You can use **npm** locally, but CI does not run `npm ci`; consider removing any tracked `package-lock.json` from git so installs stay aligned with pnpm.
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 # → http://localhost:4321
 ```
 
-**Search in dev:** Pagefind is generated only in the production build. After a successful build, `public/pagefind/` is populated, so you can use `npm run build` and then `npm run preview` (or `dev`) to test ⌘K search.
+**Search in dev:** Pagefind is generated only in the production build. After a successful build, `public/pagefind/` is populated, so you can use `pnpm run build` and then `pnpm run preview` (or `dev`) to test ⌘K search.
 
 ### Docker
 
@@ -77,17 +77,17 @@ docker run -p 4321:80 devosfera-blog
 
 ## Commands
 
-| Command                | Action                                                                                                                 |
-| :--------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| `npm install`          | Install dependencies                                                                                                   |
-| `npm run dev`          | Local dev server at `http://localhost:4321`                                                                            |
-| `npm run build`        | Runs `extract-music-covers` (prebuild) → `astro check` + build → Pagefind, then copies the index to `public/pagefind/` |
-| `npm run preview`      | Serves the production build locally                                                                                    |
-| `npm run format`       | Format with Prettier                                                                                                   |
-| `npm run format:check` | Check formatting without writing                                                                                       |
-| `npm run lint`         | ESLint                                                                                                                 |
+| Command                 | Action                                                                                                                  |
+| :---------------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| `pnpm install`          | Install dependencies                                                                                                    |
+| `pnpm run dev`          | Local dev server at `http://localhost:4321`                                                                           |
+| `pnpm run build`        | Runs `extract-music-covers` (prebuild) → `astro check` + build → Pagefind, then copies the index to `public/pagefind/` |
+| `pnpm run preview`      | Serves the production build locally                                                                                     |
+| `pnpm run format`       | Format with Prettier                                                                                                    |
+| `pnpm run format:check` | Check formatting without writing                                                                                        |
+| `pnpm run lint`         | ESLint                                                                                                                  |
 
-Replace `npm` with `pnpm` if you use the pnpm lockfile. The prebuild music script keeps cover art in `public/music-covers-extracted/` in sync with your MP3s; it runs automatically before `dev` and `build` via npm lifecycle hooks.
+The prebuild music script keeps cover art in `public/music-covers-extracted/` in sync with your MP3s; it runs automatically before `dev` and `build` via package scripts.
 
 ---
 

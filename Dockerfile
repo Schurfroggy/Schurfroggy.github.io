@@ -2,13 +2,11 @@
 FROM node:22-bookworm-slim AS base
 WORKDIR /app
 
-RUN corepack enable
-
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm ci
 
 COPY . .
-RUN pnpm run build
+RUN npm run build
 
 # Runtime stage for serving the application
 FROM nginx:mainline-alpine-slim AS runtime

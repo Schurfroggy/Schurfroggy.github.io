@@ -54,7 +54,7 @@ export const SITE = {
   dir: "ltr", // "rtl" | "auto"
   lang: "en", // html lang code. Set this empty and default will be "en"
   timezone: "Asia/Shanghai", // 北京时间（IANA）https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-  /** Home + header music: `src/assets/music/*.mp3` (see `src/data/musicPlaylist.ts`). */
+  /** Home + header music: local `src/assets/music/*.mp3` (see `src/data/musicPlaylist.ts`). */
   introAudio: {
     enabled: true,
   },

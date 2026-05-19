@@ -1,8 +1,8 @@
 ---
 import { MUSIC_TRACKS } from "@/data/musicPlaylist";
 /**
- * Home hero playlist player: local `src/assets/music` files, sequential or shuffle
- * (full shuffled list per round; new shuffle after each round, first ≠ last to avoid back-to-back repeats).
+ * Home hero playlist player: local `src/assets/music` files, sequential or shuffle.
+ * Audio loads on first play (`preload=none` until then).
  */
 interface Props {
   class?: string;

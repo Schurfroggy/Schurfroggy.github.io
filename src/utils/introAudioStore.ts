@@ -8,23 +8,9 @@ const DEFAULT_VOLUME = 0.7;
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
-type NetworkInformationLite = { saveData?: boolean; effectiveType?: string };
-
-/** Prefer full buffer before first play; honor Save-Data / metered heuristics. */
-const effectiveAudioPreload = (): HTMLMediaElement["preload"] => {
-  if (typeof navigator === "undefined") return "auto";
-  try {
-    const c = (navigator as Navigator & { connection?: NetworkInformationLite })
-      .connection;
-    if (c?.saveData) return "metadata";
-    // Very slow links: avoid pulling whole MP3 until play (still faster than before on Wi‑Fi).
-    if (c?.effectiveType === "slow-2g" || c?.effectiveType === "2g")
-      return "metadata";
-  } catch {
-    /* ignore */
-  }
-  return "auto";
-};
+/** Do not fetch audio until the user plays; avoid eager full-file downloads. */
+const PRELOAD_IDLE: HTMLMediaElement["preload"] = "none";
+const PRELOAD_PLAYING: HTMLMediaElement["preload"] = "auto";
 
 const loadStoredVolume = (): number => {
   if (typeof window === "undefined" || !window.localStorage)
@@ -68,6 +54,8 @@ type Store = {
   volume: number;
   listenersBound: boolean;
   hasStarted: boolean;
+  /** Catalog index last assigned to `audio.src`, or null before first bind */
+  loadedTrackIndex: number | null;
 };
 
 export type IntroAudioState = {
@@ -82,7 +70,6 @@ export type IntroAudioState = {
   trackIndex: number;
   trackCount: number;
   volume: number;
-  /** Cover image URL (per-track or default). */
   artworkUrl: string;
 };
 
@@ -105,9 +92,19 @@ const applySrc = (s: Store, wasPlaying: boolean) => {
   const i = getCatalogIndex(s);
   const t = s.tracks[i];
   if (!t) return;
-  s.audio.preload = effectiveAudioPreload();
-  s.audio.src = t.src;
-  s.audio.load();
+
+  s.audio.preload = wasPlaying ? PRELOAD_PLAYING : PRELOAD_IDLE;
+  const needsNewSrc = s.loadedTrackIndex !== i;
+  if (needsNewSrc) {
+    s.audio.src = t.src;
+    s.loadedTrackIndex = i;
+    if (wasPlaying) {
+      s.audio.load();
+    }
+  } else if (wasPlaying) {
+    s.audio.load();
+  }
+
   if (wasPlaying) {
     void s.audio.play().catch(() => {
       /* autoplay blocked */
@@ -130,19 +127,21 @@ const ensureShuffleOrder = (s: Store) => {
 };
 
 const readState = (s: Store): IntroAudioState => {
-  const t = s.tracks[getCatalogIndex(s)];
+  const i = getCatalogIndex(s);
+  const t = s.tracks[i];
   const d = s.audio.duration;
-  const mediaDuration = Number.isFinite(d) && d > 0 ? d : 0;
+  const mediaDuration =
+    s.loadedTrackIndex !== null && Number.isFinite(d) && d > 0 ? d : 0;
   return {
     src: t?.src ?? "",
     label: t?.label ?? "",
     isStream: false,
     playing: !s.audio.paused,
     hasStarted: s.hasStarted,
-    currentTime: s.audio.currentTime,
+    currentTime: s.loadedTrackIndex !== null ? s.audio.currentTime : 0,
     duration: mediaDuration,
     playMode: s.playMode,
-    trackIndex: getCatalogIndex(s),
+    trackIndex: i,
     trackCount: s.tracks.length,
     volume: s.audio.volume,
     artworkUrl: t?.artwork ?? "",
@@ -174,7 +173,6 @@ const goNext = (s: Store) => {
   if (n === 0) return;
   if (s.playMode === "sequential") {
     s.catalogIndex = (s.catalogIndex + 1) % n;
-    applySrc(s, !s.audio.paused);
   } else {
     ensureShuffleOrder(s);
     if (s.posInShuffle < n - 1) {
@@ -184,7 +182,9 @@ const goNext = (s: Store) => {
       s.shuffleOrder = newShuffleOrder(n, last);
       s.posInShuffle = 0;
     }
-    applySrc(s, !s.audio.paused);
+  }
+  if (!s.audio.paused) {
+    applySrc(s, true);
   }
   emitIntroAudioState(s);
 };
@@ -194,11 +194,12 @@ const goPrev = (s: Store) => {
   if (n === 0) return;
   if (s.playMode === "sequential") {
     s.catalogIndex = (s.catalogIndex - 1 + n) % n;
-    applySrc(s, !s.audio.paused);
   } else {
     ensureShuffleOrder(s);
     s.posInShuffle = s.posInShuffle > 0 ? s.posInShuffle - 1 : n - 1;
-    applySrc(s, !s.audio.paused);
+  }
+  if (!s.audio.paused) {
+    applySrc(s, true);
   }
   emitIntroAudioState(s);
 };
@@ -244,7 +245,9 @@ const setPlayMode = (s: Store, mode: "sequential" | "shuffle") => {
     /* ignore */
   }
   const was = !s.audio.paused;
-  applySrc(s, was);
+  if (s.loadedTrackIndex !== null) {
+    applySrc(s, was);
+  }
   emitIntroAudioState(s);
 };
 
@@ -282,8 +285,8 @@ export const getIntroAudioStore = () => {
   const initialMode: "sequential" | "shuffle" = storedMode ?? "sequential";
   const initialShuffle =
     initialMode === "shuffle" && n > 0 ? newShuffleOrder(n, null) : [];
-  const audio = n > 0 ? new Audio(tracks[0]!.src) : new Audio();
-  audio.preload = effectiveAudioPreload();
+  const audio = new Audio();
+  audio.preload = PRELOAD_IDLE;
   audio.volume = vol;
 
   const s: Store = {
@@ -296,16 +299,11 @@ export const getIntroAudioStore = () => {
     volume: vol,
     listenersBound: false,
     hasStarted: false,
+    loadedTrackIndex: null,
   };
 
   if (initialMode === "shuffle" && n > 0) {
     s.posInShuffle = 0;
-  }
-  if (n > 0) {
-    audio.src = (
-      initialMode === "sequential" ? tracks[0] : tracks[s.shuffleOrder[0]!]
-    )!.src;
-    audio.load();
   }
 
   bind(s);
@@ -337,6 +335,12 @@ export const storeSetPlayMode = (mode: "sequential" | "shuffle") => {
 export const storeToggle = () => {
   const s = getIntroAudioStore();
   if (s.audio.paused) {
+    if (s.loadedTrackIndex === null && s.tracks.length > 0) {
+      applySrc(s, true);
+      emitIntroAudioState(s);
+      return;
+    }
+    s.audio.preload = PRELOAD_PLAYING;
     void s.audio.play().catch(() => {});
   } else {
     s.audio.pause();
@@ -345,6 +349,7 @@ export const storeToggle = () => {
 
 export const storeSeek = (t: number) => {
   const s = getIntroAudioStore();
+  if (s.loadedTrackIndex === null) return;
   s.audio.currentTime = t;
   emitIntroAudioState(s);
 };

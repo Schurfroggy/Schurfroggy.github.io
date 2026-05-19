@@ -6,10 +6,7 @@
     "node": ">=20.19.0"
   },
   "scripts": {
-    "extract-music-covers": "node scripts/extract-music-covers.mjs",
-    "predev": "node scripts/extract-music-covers.mjs",
     "dev": "astro dev",
-    "prebuild": "node scripts/extract-music-covers.mjs",
     "build": "astro check && astro build && pagefind --site dist && cp -r dist/pagefind public/",
     "preview": "astro preview",
     "sync": "astro sync",
@@ -49,7 +46,6 @@
     "eslint": "^10.0.0",
     "eslint-plugin-astro": "^1.6.0",
     "globals": "^17.3.0",
-    "music-metadata": "^11.12.3",
     "pagefind": "^1.4.0",
     "prettier": "^3.8.1",
     "prettier-plugin-astro": "^0.14.1",

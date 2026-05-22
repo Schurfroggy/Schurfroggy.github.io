@@ -10,6 +10,7 @@ import {
   transformerNotationWordHighlight,
 } from "@shikijs/transformers";
 import { transformerFileName } from "./src/utils/transformers/fileName";
+import { rehypeMermaidSource } from "./src/utils/rehypeMermaidSource";
 import { SITE } from "./src/config";
 
 // https://astro.build/config
@@ -25,9 +26,13 @@ export default defineConfig({
   ],
   markdown: {
     remarkPlugins: [remarkToc, [remarkCollapse, { test: "Table of contents" }]],
+    rehypePlugins: [rehypeMermaidSource],
+    /* Raw <pre><code class="language-mermaid"> — Shiki line spans break client parse. */
+    syntaxHighlight: { type: "shiki", excludeLangs: ["mermaid"] },
     shikiConfig: {
       // For more themes, visit https://shiki.style/themes
-      themes: { light: "min-light", dark: "github-dark-default" },
+      /* Light posts use a dark terminal window; tokens match dark theme for contrast. */
+      themes: { light: "github-dark-default", dark: "github-dark-default" },
       defaultColor: false,
       wrap: false,
       transformers: [
@@ -42,7 +47,6 @@ export default defineConfig({
     // Hoisted `vite` vs Astro’s nested Vite: duplicate `Plugin` types fail `astro check`.
     plugins: [tailwindcss() as never],
     optimizeDeps: {
-      /** Helps dev server resolve Mermaid’s lazy diagram chunks (class/state/git/etc.). */
       include: ["mermaid"],
       exclude: ["@resvg/resvg-js"],
     },

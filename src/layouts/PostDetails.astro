@@ -207,7 +207,7 @@ const nextPost =
 
     <article
       id="article"
-      class="app-prose mt-8 w-full max-w-app prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)"
+      class="app-prose mt-8 w-full max-w-app"
     >
       <Content components={{ GalleryEmbed }} />
     </article>
@@ -438,6 +438,8 @@ const nextPost =
 
     // Pass 2: mutate DOM
     codeBlocks.forEach((codeBlock, i) => {
+      if (codeBlock.querySelector(":scope > button.copy-code")) return;
+
       const wrapper = document.createElement("div");
       wrapper.style.position = "relative";
 
@@ -479,16 +481,29 @@ const nextPost =
     ensureMermaidThemeListener,
     initMermaidInProse,
   } from "@/utils/mermaidClient";
+  import {
+    ensureTerminalCodeLangListener,
+    initTerminalCodeLang,
+  } from "@/utils/terminalCodeLang";
 
   initPostReadingPosition();
   ensureMermaidThemeListener();
+  ensureTerminalCodeLangListener();
 
   async function runMermaid() {
-    await initMermaidInProse();
+    await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    try {
+      await initMermaidInProse();
+    } catch (err) {
+      console.error("[mermaid] init failed:", err);
+    }
+    initTerminalCodeLang();
   }
 
   document.addEventListener("astro:page-load", () => void runMermaid());
+  document.addEventListener("astro:after-swap", () => void runMermaid());
   void runMermaid();
+  initTerminalCodeLang();
 </script>
 
 <style>

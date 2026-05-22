@@ -95,7 +95,7 @@ const getNovellaHref = (id: string, filePath: string | undefined) =>
       </div>
     </header>
 
-    <article class="app-prose mt-8 w-full max-w-app prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)">
+    <article class="app-prose mt-8 w-full max-w-app">
       <Content />
     </article>
 
@@ -134,14 +134,27 @@ const getNovellaHref = (id: string, filePath: string | undefined) =>
     ensureMermaidThemeListener,
     initMermaidInProse,
   } from "@/utils/mermaidClient";
+  import {
+    ensureTerminalCodeLangListener,
+    initTerminalCodeLang,
+  } from "@/utils/terminalCodeLang";
 
   initPostReadingPosition();
   ensureMermaidThemeListener();
+  ensureTerminalCodeLangListener();
 
   async function runMermaid() {
-    await initMermaidInProse();
+    await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    try {
+      await initMermaidInProse();
+    } catch (err) {
+      console.error("[mermaid] init failed:", err);
+    }
+    initTerminalCodeLang();
   }
 
   document.addEventListener("astro:page-load", () => void runMermaid());
+  document.addEventListener("astro:after-swap", () => void runMermaid());
   void runMermaid();
+  initTerminalCodeLang();
 </script>

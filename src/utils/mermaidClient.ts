@@ -1,6 +1,24 @@
-import mermaid from "mermaid";
+import type { Mermaid } from "mermaid";
 
-const PROSE = "article.app-prose";
+const PROSE_SELECTOR = "article.app-prose, article#article.app-prose";
+
+let mermaidApi: Mermaid | null = null;
+let mermaidConfigured = false;
+let renderIdSeq = 0;
+let mermaidLoadPromise: Promise<Mermaid> | null = null;
+
+function getProseRoot(): Element | null {
+  return document.querySelector(PROSE_SELECTOR);
+}
+
+async function loadMermaid(): Promise<Mermaid> {
+  if (mermaidApi) return mermaidApi;
+  mermaidLoadPromise ??= import("mermaid").then(mod => {
+    mermaidApi = mod.default;
+    return mermaidApi;
+  });
+  return mermaidLoadPromise;
+}
 
 function mermaidTheme(): "default" | "dark" {
   return document.documentElement.getAttribute("data-theme") === "dark"
@@ -8,13 +26,30 @@ function mermaidTheme(): "default" | "dark" {
     : "default";
 }
 
-function configureMermaid(): void {
+async function configureMermaid(): Promise<void> {
+  const mermaid = await loadMermaid();
+  if (mermaidConfigured) return;
   mermaid.initialize({
     startOnLoad: false,
     theme: mermaidTheme(),
     securityLevel: "loose",
-    /* Mermaid parses theme at render time: avoid CSS var()/color-mix in theme — breaks render
-     * and with suppressErrors the block stays as plain text. */
+    fontFamily: "ui-sans-serif, system-ui, sans-serif",
+    flowchart: { useMaxWidth: true },
+    sequence: { useMaxWidth: true },
+    gantt: { useMaxWidth: true },
+    themeVariables: {
+      fontSize: "16px",
+    },
+  });
+  mermaidConfigured = true;
+}
+
+async function reconfigureMermaidTheme(): Promise<void> {
+  const mermaid = await loadMermaid();
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: mermaidTheme(),
+    securityLevel: "loose",
     fontFamily: "ui-sans-serif, system-ui, sans-serif",
     flowchart: { useMaxWidth: true },
     sequence: { useMaxWidth: true },
@@ -25,10 +60,7 @@ function configureMermaid(): void {
   });
 }
 
-/**
- * Shiki wraps each line in <span class="line">; code.textContent joins them
- * without newlines, which breaks Mermaid. Reconstruct with line breaks.
- */
+/** Join Shiki <span class="line"> when an older build still used highlighting. */
 function getMermaidDefinitionFromCodeBlock(code: Element): string {
   const lineSpans = code.querySelectorAll("span.line");
   if (lineSpans.length > 0) {
@@ -37,30 +69,102 @@ function getMermaidDefinitionFromCodeBlock(code: Element): string {
       .join("\n")
       .trim();
   }
-  return (code.textContent ?? "").trim();
+  return (code.textContent ?? "").replace(/\r\n?/g, "\n").trim();
 }
 
 /**
- * Finds Shiki-highlighted ```mermaid fences and replaces them with rendered SVG.
+ * Prefer live <code> text (reliable newlines). `data-mermaid-source` can break when
+ * the HTML attribute spans multiple lines.
+ */
+function getMermaidDefinition(pre: HTMLPreElement, code: Element): string {
+  const fromCode = getMermaidDefinitionFromCodeBlock(code);
+  if (fromCode) return fromCode;
+  const fromAttr =
+    pre.getAttribute("data-mermaid-source") ??
+    code.getAttribute("data-mermaid-source");
+  return fromAttr?.trim() ?? "";
+}
+
+function findMermaidPres(root: ParentNode): HTMLPreElement[] {
+  const pres = new Set<HTMLPreElement>();
+  root
+    .querySelectorAll<HTMLPreElement>("pre[data-language='mermaid']")
+    .forEach(pre => pres.add(pre));
+  root.querySelectorAll<HTMLPreElement>("pre > code.language-mermaid").forEach(code => {
+    const pre = code.closest("pre");
+    if (pre) pres.add(pre);
+  });
+  return [...pres];
+}
+
+async function renderMermaidInto(
+  host: HTMLElement,
+  definition: string
+): Promise<boolean> {
+  const mermaid = await loadMermaid();
+  const id = `mermaid-diagram-${++renderIdSeq}`;
+  try {
+    const { svg, bindFunctions } = await mermaid.render(id, definition);
+    host.innerHTML = svg;
+    bindFunctions?.(host);
+    return true;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    const staleViteChunk =
+      /Failed to fetch dynamically imported module/i.test(message) &&
+      /node_modules\/\.vite\/deps/i.test(message);
+    console.warn("[mermaid] render failed:", err);
+    if (staleViteChunk) {
+      console.warn(
+        "[mermaid] Stale Vite cache — run: rm -rf node_modules/.vite && npm run dev, then hard-refresh."
+      );
+    }
+    const hint = staleViteChunk
+      ? `${message}\n\n（开发环境）请停止 dev 后执行 rm -rf node_modules/.vite && npm run dev，并强制刷新页面。`
+      : message;
+    host.innerHTML = `<pre class="mermaid-render-error text-sm text-red-600 dark:text-red-400 whitespace-pre-wrap">${escapeHtml(
+      hint
+    )}</pre>`;
+    return false;
+  }
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/**
+ * Finds ```mermaid fences and replaces them with rendered SVG.
  */
 export async function initMermaidInProse(): Promise<void> {
-  const root = document.querySelector(PROSE);
+  const root = getProseRoot();
   if (!root) return;
 
-  /* Astro + Shiki: language is on <pre data-language="mermaid">, not on <code> */
-  const pres = root.querySelectorAll("pre[data-language='mermaid']");
+  const pres = findMermaidPres(root);
   if (!pres.length) return;
 
-  configureMermaid();
-
-  const nodes: HTMLElement[] = [];
+  try {
+    await configureMermaid();
+  } catch (err) {
+    console.error("[mermaid] failed to load library:", err);
+    return;
+  }
 
   for (const pre of pres) {
+    if (pre.closest(".mermaid-diagram-wrapper")) continue;
+
     const code = pre.querySelector(":scope > code");
     if (!code) continue;
 
-    const definition = getMermaidDefinitionFromCodeBlock(code);
+    const definition = getMermaidDefinition(pre, code);
     if (!definition) continue;
+
+    pre.setAttribute("data-language", "mermaid");
+    pre.classList.add("mermaid-pending");
 
     const wrap = document.createElement("figure");
     wrap.className =
@@ -69,47 +173,39 @@ export async function initMermaidInProse(): Promise<void> {
     wrap.setAttribute("aria-label", "Diagram");
 
     const inner = document.createElement("div");
-    inner.className = "mermaid w-full min-w-0";
-    inner.textContent = definition;
+    inner.className = "mermaid-host w-full min-w-0";
 
     wrap.appendChild(inner);
     pre.replaceWith(wrap);
-    nodes.push(inner);
+    await renderMermaidInto(inner, definition);
   }
-
-  if (nodes.length === 0) return;
-
-  await mermaid.run({ nodes, suppressErrors: true });
 }
 
-/** Re-render diagrams after light/dark toggle (theme CSS variables + mermaid theme). */
+/** Re-render diagrams after light/dark toggle. */
 export async function refreshMermaidDiagramsForTheme(): Promise<void> {
-  const wrappers = document.querySelectorAll(
-    `${PROSE} .mermaid-diagram-wrapper[data-mermaid-definition]`
+  const root = getProseRoot();
+  if (!root) return;
+
+  const wrappers = root.querySelectorAll<HTMLElement>(
+    ".mermaid-diagram-wrapper[data-mermaid-definition]"
   );
   if (!wrappers.length) return;
 
-  configureMermaid();
+  await reconfigureMermaidTheme();
 
-  const nodes: HTMLElement[] = [];
   for (const w of wrappers) {
     const def = w.getAttribute("data-mermaid-definition") ?? "";
     if (!def) continue;
-    w.replaceChildren();
-    const inner = document.createElement("div");
-    inner.className = "mermaid w-full min-w-0";
-    inner.textContent = def;
-    w.appendChild(inner);
-    nodes.push(inner);
+    const host =
+      w.querySelector<HTMLElement>(".mermaid-host") ??
+      w.querySelector<HTMLElement>(".mermaid");
+    if (!host) continue;
+    await renderMermaidInto(host, def);
   }
-
-  if (nodes.length === 0) return;
-  await mermaid.run({ nodes, suppressErrors: true });
 }
 
 let themeListenerBound = false;
 
-/** Avoid duplicate listeners when scripts re-run (e.g. View Transitions). */
 export function ensureMermaidThemeListener(): void {
   if (themeListenerBound) return;
   themeListenerBound = true;

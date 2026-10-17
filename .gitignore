@@ -34,7 +34,8 @@ pnpm-debug.log*
 public/pagefind
 .vercel
 
-SKILLS_USAGE.md
+# agent skills live in .claude/skills/ and are tracked on purpose
+# (migrated from .cursor/skills/, which is no longer used)
 
 # local style demo assets
 src/assets/样式/

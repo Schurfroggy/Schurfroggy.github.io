@@ -32,7 +32,8 @@ description: >-
 
 - `description`
   - 若用户或原文已提供，则写入该值。
-  - 若没有提供 `description`，设置为 **`null`**（不要自动生成描述）。
+  - 若没有提供 `description`，**省略该字段**（不要自动生成描述，也不要写 `null`）。
+  - ⚠️ `src/content.config.ts` 里该字段是 `z.string().default("A short fiction piece.")`，显式写 `null` 会触发 `InvalidContentEntryDataError` 让构建失败；省略才会走默认值。
 
 - `pubDatetime`
   - 保留已有值；若用户明确提供发布时间则写入。
@@ -59,12 +60,12 @@ description: >-
 ```markdown
 ---
 title: "..."
-description: null
 pubDatetime: 2026-04-28T18:00:00+08:00
 ---
 ```
 
 > 仅在有明确来源时填写 `title` / `pubDatetime`。`tags` 没有来源就不要补。
+> `description` 没有来源时直接不写（schema 默认 `"A short fiction piece."`），**不要写 `null`**。
 
 ## 适用范围声明
 

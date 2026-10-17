@@ -130,6 +130,21 @@ const isActive = (path: string) => {
               >
             </li>
             {
+              SITE.showGames && (
+                <li>
+                  <a
+                    href="/games"
+                    class:list={[
+                      "nav-link",
+                      { "nav-active": isActive("/games") },
+                    ]}
+                  >
+                    Games
+                  </a>
+                </li>
+              )
+            }
+            {
               SITE.showArchives && (
                 <li>
                   <LinkButton

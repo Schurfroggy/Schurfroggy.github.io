@@ -23,6 +23,7 @@ export const SITE = {
   showArchives: true,
   showGalleries: true,
   showGalleriesInIndex: true, // Show galleries in the general paginated list (only if showGalleries is true)
+  showGames: true, // Games page + header entry (see `src/data/games.ts`)
   showBackButton: true, // show back button in post detail
   heroTerminalPrompt: {
     prefix: "~", // highlighted part on the left

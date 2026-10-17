@@ -1,0 +1,274 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import GameCard from "@/components/GameCard.astro";
+import { SITE } from "@/config";
+import { GAMES } from "@/data/games";
+
+if (!SITE.showGames) {
+  return Astro.redirect("/404");
+}
+
+const games = GAMES;
+const gameCount = games.length;
+/** Keep the two-column grid balanced while the roster is small. */
+const showComingSoon = gameCount % 2 === 1;
+
+const playableCount = games.filter(game => game.status === "playable").length;
+
+const pageDescription =
+  "Small games and experiments — playable in the browser, or one click away from the source.";
+---
+
+<Layout title={`Games | ${SITE.title}`} description={pageDescription}>
+  <Header />
+  <Breadcrumb />
+
+  <main id="main-content" class="app-layout pb-12">
+    <!-- Hero -->
+    <section class="games-hero relative overflow-hidden rounded-3xl">
+      <div class="aurora-orb aurora-orb-1" aria-hidden="true"></div>
+      <div class="aurora-orb aurora-orb-2" aria-hidden="true"></div>
+      <div class="aurora-orb aurora-orb-3" aria-hidden="true"></div>
+
+      <div class="relative z-10">
+        <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
+          <span class="glow-text">Games</span>
+        </h1>
+        <p class="mt-3 max-w-lg text-foreground/70 italic">
+          Small games and experiments — playable in the browser, or one click
+          away from the source.
+        </p>
+        <div class="mt-4 flex flex-wrap items-center gap-2">
+          <span class="hero-badge"
+            >{gameCount}
+            {gameCount === 1 ? "game" : "games"}</span
+          >
+          {
+            playableCount > 0 && (
+              <span class="hero-badge">{playableCount} playable now</span>
+            )
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid -->
+    {
+      gameCount === 0 ? (
+        <p class="mt-12 text-center text-foreground/50 italic">
+          No games yet. Add an entry to <code>src/data/games.ts</code> to get
+          started.
+        </p>
+      ) : (
+        <ul class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2" role="list">
+          {games.map(game => (
+            <li id={game.slug} class="h-full scroll-mt-28">
+              <GameCard game={game} />
+            </li>
+          ))}
+
+          {showComingSoon && (
+            <li class="h-full">
+              <div class="coming-soon group/soon flex h-full min-h-[22rem] flex-col items-center justify-center gap-3 rounded-3xl p-8 text-center">
+                <div class="coming-icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="size-7"
+                  >
+                    <path d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" />
+                  </svg>
+                </div>
+                <p class="text-lg font-semibold text-foreground/70">
+                  更多游戏筹备中
+                </p>
+                <p class="max-w-[28ch] text-sm text-pretty text-foreground/45">
+                  新的小游戏和实验会陆续出现在这里。
+                </p>
+              </div>
+            </li>
+          )}
+        </ul>
+      )
+    }
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* ─── Hero ─── */
+  .games-hero {
+    margin-top: 1.25rem;
+    padding: 1.75rem;
+    border: 1px solid color-mix(in srgb, var(--border) 22%, transparent);
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent) 8%, transparent),
+      color-mix(in srgb, var(--muted) 18%, transparent) 45%,
+      transparent 78%
+    );
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  @media (min-width: 640px) {
+    .games-hero {
+      padding: 2.75rem;
+    }
+  }
+
+  .aurora-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .aurora-orb-1 {
+    width: 300px;
+    height: 300px;
+    top: -30%;
+    left: -10%;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--accent) 25%, transparent),
+      transparent 70%
+    );
+    animation: orb-1 7s ease-in-out infinite alternate;
+  }
+
+  .aurora-orb-2 {
+    width: 250px;
+    height: 250px;
+    top: 10%;
+    right: -5%;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--border) 20%, transparent),
+      transparent 70%
+    );
+    animation: orb-2 9s ease-in-out infinite alternate;
+  }
+
+  .aurora-orb-3 {
+    width: 200px;
+    height: 200px;
+    bottom: -20%;
+    left: 40%;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--accent) 12%, transparent),
+      transparent 70%
+    );
+    animation: orb-3 11s ease-in-out infinite alternate;
+  }
+
+  @keyframes orb-1 {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      transform: translate(40px, 20px) scale(1.2);
+    }
+  }
+
+  @keyframes orb-2 {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      transform: translate(-30px, 30px) scale(1.15);
+    }
+  }
+
+  @keyframes orb-3 {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      transform: translate(20px, -25px) scale(1.1);
+    }
+  }
+
+  .glow-text {
+    background: linear-gradient(135deg, var(--foreground), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(
+      0 0 25px color-mix(in srgb, var(--accent) 25%, transparent)
+    );
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 15%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* ─── Coming-soon placeholder ─── */
+  .coming-soon {
+    border: 1.5px dashed color-mix(in srgb, var(--border) 38%, transparent);
+    background:
+      radial-gradient(
+        circle at 50% 0%,
+        color-mix(in srgb, var(--accent) 7%, transparent),
+        transparent 62%
+      ),
+      color-mix(in srgb, var(--background) 42%, transparent);
+    transition:
+      border-color 0.3s ease,
+      background-color 0.3s ease;
+  }
+
+  .coming-soon:hover {
+    border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+
+  .coming-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 1rem;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    transition: transform 0.3s ease;
+  }
+
+  .coming-soon:hover .coming-icon {
+    transform: translateY(-2px) rotate(-4deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .aurora-orb {
+      animation: none;
+    }
+
+    .coming-icon,
+    .coming-soon:hover .coming-icon {
+      transition: none;
+      transform: none;
+    }
+  }
+</style>

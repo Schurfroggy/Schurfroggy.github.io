@@ -4,6 +4,7 @@
  */
 import type { ImageMetadata } from "astro";
 import openFrontCover from "@/assets/games/openfront.jpg";
+import minecraftCaicaiCover from "@/assets/games/mc-caicai-cover.png";
 
 export type GameStatus = "playable" | "wip" | "offline";
 
@@ -40,7 +41,18 @@ export const GAMES: Game[] = [
     cover: openFrontCover,
     tags: ["RTS", "多人", "中文"],
     status: "playable",
-    play: "http://124.222.245.42/",
+    play: "https://openfront.schurfroggy.art/",
     repo: "https://github.com/Schurfroggy/OpenFrontFroggy",
+  },
+  {
+    slug: "minecraftcaicai",
+    title: "我的世界猜词",
+    tagline: "Minecraft 猜猜我是谁 · 单人益智",
+    description:
+      "从 2,436 条 Minecraft 词条中猜出隐藏答案，根据名称、加入版本、类型、标签、特征、字数与维度的颜色提示逐步推理。支持无限猜测、自定义范围与历史记录。",
+    cover: minecraftCaicaiCover,
+    tags: ["Minecraft", "猜词", "中文"],
+    status: "playable",
+    play: "https://minecraftcaicai.terrencelamnerds.workers.dev/",
   },
 ];
